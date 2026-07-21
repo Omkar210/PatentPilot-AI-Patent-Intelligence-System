@@ -1,0 +1,73 @@
+# =============================================================
+# PatentPilot AI — .gitignore
+# =============================================================
+
+# -------  Python  -------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# -------  Virtual Environment  -------
+venv/
+.venv/
+env/
+ENV/
+
+# -------  Environment & Secrets  -------
+.env
+*.env
+!.env.example
+
+# -------  IDE & Editor  -------
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# -------  Testing  -------
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# -------  Database & Storage  -------
+*.db
+*.sqlite3
+chroma_data/
+alembic/versions/__pycache__/
+
+# -------  Docker  -------
+postgres_data/
+neo4j_data/
+neo4j_logs/
+neo4j_plugins/
+neo4j_import/
+
+# -------  Uploads & Generated  -------
+uploads/
+reports/
+*.pdf
+
+# -------  Node / Frontend (Phase 6)  -------
+frontend/node_modules/
+frontend/.next/
+frontend/dist/
+frontend/build/
+frontend/.env.local
+
+# -------  Misc  -------
+*.bak
+*.tmp
+.mypy_cache/
+.ruff_cache/

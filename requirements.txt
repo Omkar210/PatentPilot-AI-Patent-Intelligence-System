@@ -1,0 +1,99 @@
+# -----------------------------
+# Backend
+# -----------------------------
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+
+# -----------------------------
+# Database
+# -----------------------------
+sqlalchemy==2.0.43
+psycopg2-binary==2.9.12
+alembic==1.16.5
+
+# -----------------------------
+# Environment
+# -----------------------------
+python-dotenv==1.1.1
+python-multipart==0.0.20
+
+# -----------------------------
+# LangChain / LangGraph
+# -----------------------------
+langgraph==0.6.6
+langchain==0.3.27
+langchain-community==0.3.29
+langchain-core==0.3.75
+
+# -----------------------------
+# Vector Database
+# -----------------------------
+chromadb==1.0.20
+
+# -----------------------------
+# Graph Database
+# -----------------------------
+neo4j==5.28.2
+networkx==3.5
+
+# -----------------------------
+# Embeddings
+# -----------------------------
+sentence-transformers==5.1.0
+
+# -----------------------------
+# Data Processing
+# -----------------------------
+pandas==2.3.3
+numpy==2.3.2
+
+# -----------------------------
+# HTTP
+# -----------------------------
+httpx==0.28.1
+requests==2.32.5
+
+# -----------------------------
+# PDF Processing
+# -----------------------------
+PyMuPDF==1.26.4
+
+# -----------------------------
+# OCR
+# -----------------------------
+# NOTE: PaddlePaddle/PaddleOCR have NO PyPI wheel for Python 3.14.
+# On Python 3.11/3.12, use the exact pins below.
+# On Python 3.14+, install manually from PaddlePaddle's official mirror:
+#   pip install paddlepaddle==3.1.1 -f https://www.paddlepaddle.org.cn/whl/windows/mkl/avx/stable.html
+#   pip install paddleocr==3.2.0
+# These packages are used ONLY as a fallback OCR engine in agents/document_processing.py
+# paddlepaddle==3.1.1
+# paddleocr==3.2.0
+
+# -----------------------------
+# Computer Vision
+# -----------------------------
+opencv-python==4.12.0.88
+# NOTE: Pillow 11.3.0 has no Py3.14 wheel; 12.3.0 is installed on Py3.14
+# On Python 3.11/3.12, pin to: Pillow==11.3.0
+Pillow==11.3.0
+
+# -----------------------------
+# LLM (local optional tasks only — main calls use hosted APIs below)
+# -----------------------------
+# NOTE: transformers 4.55.4 has no Python 3.14 wheel; 4.57.6 is installed on Py3.14
+# On Python 3.11/3.12, pin to: transformers==4.55.4
+transformers==4.55.4
+accelerate==1.10.0
+
+# -----------------------------
+# Hosted LLM Providers
+# -----------------------------
+groq==0.31.0
+google-generativeai==0.8.5
+
+# -----------------------------
+# Utilities
+# -----------------------------
+tqdm==4.67.1
+rich==14.1.0
