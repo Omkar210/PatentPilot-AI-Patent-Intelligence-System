@@ -1,0 +1,303 @@
+[
+  {
+    "patent_id": "US10000000B2",
+    "title": "US10000000B2",
+    "total_pages": 13,
+    "total_characters": 39423,
+    "extracted_file": "data\\extracted_documents\\US10000000B2.json"
+  },
+  {
+    "patent_id": "US10050000B2",
+    "title": "US10050000B2",
+    "total_pages": 11,
+    "total_characters": 36566,
+    "extracted_file": "data\\extracted_documents\\US10050000B2.json"
+  },
+  {
+    "patent_id": "US10100000B2",
+    "title": "US10100000B2",
+    "total_pages": 6,
+    "total_characters": 15454,
+    "extracted_file": "data\\extracted_documents\\US10100000B2.json"
+  },
+  {
+    "patent_id": "US10150000B2",
+    "title": "US10150000B2",
+    "total_pages": 20,
+    "total_characters": 36980,
+    "extracted_file": "data\\extracted_documents\\US10150000B2.json"
+  },
+  {
+    "patent_id": "US10200000B2",
+    "title": "US10200000B2",
+    "total_pages": 16,
+    "total_characters": 60301,
+    "extracted_file": "data\\extracted_documents\\US10200000B2.json"
+  },
+  {
+    "patent_id": "US10250000B2",
+    "title": "US10250000B2",
+    "total_pages": 18,
+    "total_characters": 27940,
+    "extracted_file": "data\\extracted_documents\\US10250000B2.json"
+  },
+  {
+    "patent_id": "US10300000B2",
+    "title": "US10300000B2",
+    "total_pages": 47,
+    "total_characters": 170459,
+    "extracted_file": "data\\extracted_documents\\US10300000B2.json"
+  },
+  {
+    "patent_id": "US10350000B2",
+    "title": "US10350000B2",
+    "total_pages": 37,
+    "total_characters": 103273,
+    "extracted_file": "data\\extracted_documents\\US10350000B2.json"
+  },
+  {
+    "patent_id": "US10400000B2",
+    "title": "US10400000B2",
+    "total_pages": 34,
+    "total_characters": 138991,
+    "extracted_file": "data\\extracted_documents\\US10400000B2.json"
+  },
+  {
+    "patent_id": "US10450000B2",
+    "title": "US10450000B2",
+    "total_pages": 13,
+    "total_characters": 47130,
+    "extracted_file": "data\\extracted_documents\\US10450000B2.json"
+  },
+  {
+    "patent_id": "US10500000B2",
+    "title": "US10500000B2",
+    "total_pages": 41,
+    "total_characters": 150226,
+    "extracted_file": "data\\extracted_documents\\US10500000B2.json"
+  },
+  {
+    "patent_id": "US10550000B2",
+    "title": "US10550000B2",
+    "total_pages": 49,
+    "total_characters": 220265,
+    "extracted_file": "data\\extracted_documents\\US10550000B2.json"
+  },
+  {
+    "patent_id": "US10600000B2",
+    "title": "US10600000B2",
+    "total_pages": 14,
+    "total_characters": 70688,
+    "extracted_file": "data\\extracted_documents\\US10600000B2.json"
+  },
+  {
+    "patent_id": "US10650000B2",
+    "title": "US10650000B2",
+    "total_pages": 65,
+    "total_characters": 254129,
+    "extracted_file": "data\\extracted_documents\\US10650000B2.json"
+  },
+  {
+    "patent_id": "US10700000B2",
+    "title": "US10700000B2",
+    "total_pages": 14,
+    "total_characters": 48848,
+    "extracted_file": "data\\extracted_documents\\US10700000B2.json"
+  },
+  {
+    "patent_id": "US10800000B2",
+    "title": "US10800000B2",
+    "total_pages": 13,
+    "total_characters": 58394,
+    "extracted_file": "data\\extracted_documents\\US10800000B2.json"
+  },
+  {
+    "patent_id": "US10850000B2",
+    "title": "US10850000B2",
+    "total_pages": 22,
+    "total_characters": 74000,
+    "extracted_file": "data\\extracted_documents\\US10850000B2.json"
+  },
+  {
+    "patent_id": "US10900000B2",
+    "title": "US10900000B2",
+    "total_pages": 358,
+    "total_characters": 647043,
+    "extracted_file": "data\\extracted_documents\\US10900000B2.json"
+  },
+  {
+    "patent_id": "US10950000B2",
+    "title": "US10950000B2",
+    "total_pages": 10,
+    "total_characters": 33847,
+    "extracted_file": "data\\extracted_documents\\US10950000B2.json"
+  },
+  {
+    "patent_id": "US11000000B2",
+    "title": "US11000000B2",
+    "total_pages": 8,
+    "total_characters": 26010,
+    "extracted_file": "data\\extracted_documents\\US11000000B2.json"
+  },
+  {
+    "patent_id": "US11050000B2",
+    "title": "US11050000B2",
+    "total_pages": 14,
+    "total_characters": 38032,
+    "extracted_file": "data\\extracted_documents\\US11050000B2.json"
+  },
+  {
+    "patent_id": "US11100000B2",
+    "title": "US11100000B2",
+    "total_pages": 10,
+    "total_characters": 39216,
+    "extracted_file": "data\\extracted_documents\\US11100000B2.json"
+  },
+  {
+    "patent_id": "US11150000B2",
+    "title": "US11150000B2",
+    "total_pages": 26,
+    "total_characters": 79536,
+    "extracted_file": "data\\extracted_documents\\US11150000B2.json"
+  },
+  {
+    "patent_id": "US11200000B2",
+    "title": "US11200000B2",
+    "total_pages": 30,
+    "total_characters": 77982,
+    "extracted_file": "data\\extracted_documents\\US11200000B2.json"
+  },
+  {
+    "patent_id": "US11250000B2",
+    "title": "US11250000B2",
+    "total_pages": 17,
+    "total_characters": 73884,
+    "extracted_file": "data\\extracted_documents\\US11250000B2.json"
+  },
+  {
+    "patent_id": "US11300000B2",
+    "title": "US11300000B2",
+    "total_pages": 22,
+    "total_characters": 76249,
+    "extracted_file": "data\\extracted_documents\\US11300000B2.json"
+  },
+  {
+    "patent_id": "US11350000B2",
+    "title": "US11350000B2",
+    "total_pages": 29,
+    "total_characters": 77092,
+    "extracted_file": "data\\extracted_documents\\US11350000B2.json"
+  },
+  {
+    "patent_id": "US11400000B2",
+    "title": "US11400000B2",
+    "total_pages": 16,
+    "total_characters": 59211,
+    "extracted_file": "data\\extracted_documents\\US11400000B2.json"
+  },
+  {
+    "patent_id": "US11450000B2",
+    "title": "US11450000B2",
+    "total_pages": 31,
+    "total_characters": 107092,
+    "extracted_file": "data\\extracted_documents\\US11450000B2.json"
+  },
+  {
+    "patent_id": "US11500000B2",
+    "title": "US11500000B2",
+    "total_pages": 17,
+    "total_characters": 65661,
+    "extracted_file": "data\\extracted_documents\\US11500000B2.json"
+  },
+  {
+    "patent_id": "US11550000B2",
+    "title": "US11550000B2",
+    "total_pages": 23,
+    "total_characters": 68562,
+    "extracted_file": "data\\extracted_documents\\US11550000B2.json"
+  },
+  {
+    "patent_id": "US11600000B2",
+    "title": "US11600000B2",
+    "total_pages": 16,
+    "total_characters": 15,
+    "extracted_file": "data\\extracted_documents\\US11600000B2.json"
+  },
+  {
+    "patent_id": "US11650000B2",
+    "title": "US11650000B2",
+    "total_pages": 14,
+    "total_characters": 13,
+    "extracted_file": "data\\extracted_documents\\US11650000B2.json"
+  },
+  {
+    "patent_id": "US11700000B2",
+    "title": "US11700000B2",
+    "total_pages": 12,
+    "total_characters": 11,
+    "extracted_file": "data\\extracted_documents\\US11700000B2.json"
+  },
+  {
+    "patent_id": "US11750000B2",
+    "title": "US11750000B2",
+    "total_pages": 14,
+    "total_characters": 13,
+    "extracted_file": "data\\extracted_documents\\US11750000B2.json"
+  },
+  {
+    "patent_id": "US11800000B2",
+    "title": "US11800000B2",
+    "total_pages": 21,
+    "total_characters": 20,
+    "extracted_file": "data\\extracted_documents\\US11800000B2.json"
+  },
+  {
+    "patent_id": "US11850000B2",
+    "title": "US11850000B2",
+    "total_pages": 25,
+    "total_characters": 24,
+    "extracted_file": "data\\extracted_documents\\US11850000B2.json"
+  },
+  {
+    "patent_id": "US11900000B2",
+    "title": "US11900000B2",
+    "total_pages": 12,
+    "total_characters": 11,
+    "extracted_file": "data\\extracted_documents\\US11900000B2.json"
+  },
+  {
+    "patent_id": "US11950000B2",
+    "title": "US11950000B2",
+    "total_pages": 16,
+    "total_characters": 15,
+    "extracted_file": "data\\extracted_documents\\US11950000B2.json"
+  },
+  {
+    "patent_id": "US12000000B2",
+    "title": "US12000000B2",
+    "total_pages": 157,
+    "total_characters": 156,
+    "extracted_file": "data\\extracted_documents\\US12000000B2.json"
+  },
+  {
+    "patent_id": "US12100000B2",
+    "title": "US12100000B2",
+    "total_pages": 19,
+    "total_characters": 18,
+    "extracted_file": "data\\extracted_documents\\US12100000B2.json"
+  },
+  {
+    "patent_id": "US12150000B2",
+    "title": "US12150000B2",
+    "total_pages": 24,
+    "total_characters": 23,
+    "extracted_file": "data\\extracted_documents\\US12150000B2.json"
+  },
+  {
+    "patent_id": "US12200000B2",
+    "title": "US12200000B2",
+    "total_pages": 20,
+    "total_characters": 19,
+    "extracted_file": "data\\extracted_documents\\US12200000B2.json"
+  }
+]
