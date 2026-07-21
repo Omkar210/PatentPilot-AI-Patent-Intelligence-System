@@ -1,0 +1,452 @@
+{
+  "Artificial Intelligence": [
+    {
+      "patent_id": "US10000000B2",
+      "local_path": "uploads\\pdfs\\US10000000B2.pdf",
+      "size_bytes": 1029441,
+      "page_count": 13
+    },
+    {
+      "patent_id": "US10100000B2",
+      "local_path": "uploads\\pdfs\\US10100000B2.pdf",
+      "size_bytes": 399835,
+      "page_count": 6
+    },
+    {
+      "patent_id": "US10200000B2",
+      "local_path": "uploads\\pdfs\\US10200000B2.pdf",
+      "size_bytes": 1544740,
+      "page_count": 16
+    },
+    {
+      "patent_id": "US10300000B2",
+      "local_path": "uploads\\pdfs\\US10300000B2.pdf",
+      "size_bytes": 5360064,
+      "page_count": 47
+    },
+    {
+      "patent_id": "US10400000B2",
+      "local_path": "uploads\\pdfs\\US10400000B2.pdf",
+      "size_bytes": 3458201,
+      "page_count": 34
+    }
+  ],
+  "Machine Learning": [
+    {
+      "patent_id": "US10500000B2",
+      "local_path": "uploads\\pdfs\\US10500000B2.pdf",
+      "size_bytes": 3968824,
+      "page_count": 41
+    },
+    {
+      "patent_id": "US10600000B2",
+      "local_path": "uploads\\pdfs\\US10600000B2.pdf",
+      "size_bytes": 1762990,
+      "page_count": 14
+    },
+    {
+      "patent_id": "US10700000B2",
+      "local_path": "uploads\\pdfs\\US10700000B2.pdf",
+      "size_bytes": 1324256,
+      "page_count": 14
+    },
+    {
+      "patent_id": "US10800000B2",
+      "local_path": "uploads\\pdfs\\US10800000B2.pdf",
+      "size_bytes": 1653843,
+      "page_count": 13
+    },
+    {
+      "patent_id": "US10900000B2",
+      "local_path": "uploads\\pdfs\\US10900000B2.pdf",
+      "size_bytes": 26211365,
+      "page_count": 358
+    }
+  ],
+  "Deep Learning": [
+    {
+      "patent_id": "US11000000B2",
+      "local_path": "uploads\\pdfs\\US11000000B2.pdf",
+      "size_bytes": 689752,
+      "page_count": 8
+    },
+    {
+      "patent_id": "US11100000B2",
+      "local_path": "uploads\\pdfs\\US11100000B2.pdf",
+      "size_bytes": 1073002,
+      "page_count": 10
+    },
+    {
+      "patent_id": "US11200000B2",
+      "local_path": "uploads\\pdfs\\US11200000B2.pdf",
+      "size_bytes": 2156153,
+      "page_count": 30
+    },
+    {
+      "patent_id": "US11300000B2",
+      "local_path": "uploads\\pdfs\\US11300000B2.pdf",
+      "size_bytes": 2136246,
+      "page_count": 22
+    },
+    {
+      "patent_id": "US11400000B2",
+      "local_path": "uploads\\pdfs\\US11400000B2.pdf",
+      "size_bytes": 1734194,
+      "page_count": 16
+    }
+  ],
+  "Large Language Models": [
+    {
+      "patent_id": "US11500000B2",
+      "local_path": "uploads\\pdfs\\US11500000B2.pdf",
+      "size_bytes": 1770478,
+      "page_count": 17
+    },
+    {
+      "patent_id": "US11600000B2",
+      "local_path": "uploads\\pdfs\\US11600000B2.pdf",
+      "size_bytes": 1248306,
+      "page_count": 16
+    },
+    {
+      "patent_id": "US11700000B2",
+      "local_path": "uploads\\pdfs\\US11700000B2.pdf",
+      "size_bytes": 740528,
+      "page_count": 12
+    },
+    {
+      "patent_id": "US11800000B2",
+      "local_path": "uploads\\pdfs\\US11800000B2.pdf",
+      "size_bytes": 1254452,
+      "page_count": 21
+    },
+    {
+      "patent_id": "US11900000B2",
+      "local_path": "uploads\\pdfs\\US11900000B2.pdf",
+      "size_bytes": 803000,
+      "page_count": 12
+    }
+  ],
+  "Agentic AI": [
+    {
+      "patent_id": "US12000000B2",
+      "local_path": "uploads\\pdfs\\US12000000B2.pdf",
+      "size_bytes": 6886796,
+      "page_count": 157
+    },
+    {
+      "patent_id": "US12100000B2",
+      "local_path": "uploads\\pdfs\\US12100000B2.pdf",
+      "size_bytes": 1362515,
+      "page_count": 19
+    },
+    {
+      "patent_id": "US12150000B2",
+      "local_path": "uploads\\pdfs\\US12150000B2.pdf",
+      "size_bytes": 1733560,
+      "page_count": 24
+    },
+    {
+      "patent_id": "US12200000B2",
+      "local_path": "uploads\\pdfs\\US12200000B2.pdf",
+      "size_bytes": 1821547,
+      "page_count": 20
+    }
+  ],
+  "Retrieval Augmented Generation": [
+    {
+      "patent_id": "US11450000B2",
+      "local_path": "uploads\\pdfs\\US11450000B2.pdf",
+      "size_bytes": 4377357,
+      "page_count": 31
+    },
+    {
+      "patent_id": "US11550000B2",
+      "local_path": "uploads\\pdfs\\US11550000B2.pdf",
+      "size_bytes": 2074116,
+      "page_count": 23
+    },
+    {
+      "patent_id": "US11650000B2",
+      "local_path": "uploads\\pdfs\\US11650000B2.pdf",
+      "size_bytes": 1097157,
+      "page_count": 14
+    },
+    {
+      "patent_id": "US11750000B2",
+      "local_path": "uploads\\pdfs\\US11750000B2.pdf",
+      "size_bytes": 1057202,
+      "page_count": 14
+    },
+    {
+      "patent_id": "US11850000B2",
+      "local_path": "uploads\\pdfs\\US11850000B2.pdf",
+      "size_bytes": 1818872,
+      "page_count": 25
+    }
+  ],
+  "Computer Vision": [
+    {
+      "patent_id": "US10250000B2",
+      "local_path": "uploads\\pdfs\\US10250000B2.pdf",
+      "size_bytes": 1001155,
+      "page_count": 18
+    },
+    {
+      "patent_id": "US10350000B2",
+      "local_path": "uploads\\pdfs\\US10350000B2.pdf",
+      "size_bytes": 3191816,
+      "page_count": 37
+    },
+    {
+      "patent_id": "US10450000B2",
+      "local_path": "uploads\\pdfs\\US10450000B2.pdf",
+      "size_bytes": 1270566,
+      "page_count": 13
+    },
+    {
+      "patent_id": "US10550000B2",
+      "local_path": "uploads\\pdfs\\US10550000B2.pdf",
+      "size_bytes": 5581422,
+      "page_count": 49
+    },
+    {
+      "patent_id": "US10650000B2",
+      "local_path": "uploads\\pdfs\\US10650000B2.pdf",
+      "size_bytes": 10150684,
+      "page_count": 65
+    }
+  ],
+  "Natural Language Processing": [
+    {
+      "patent_id": "US10850000B2",
+      "local_path": "uploads\\pdfs\\US10850000B2.pdf",
+      "size_bytes": 2013356,
+      "page_count": 22
+    },
+    {
+      "patent_id": "US10950000B2",
+      "local_path": "uploads\\pdfs\\US10950000B2.pdf",
+      "size_bytes": 882199,
+      "page_count": 10
+    },
+    {
+      "patent_id": "US11050000B2",
+      "local_path": "uploads\\pdfs\\US11050000B2.pdf",
+      "size_bytes": 1317418,
+      "page_count": 14
+    },
+    {
+      "patent_id": "US11150000B2",
+      "local_path": "uploads\\pdfs\\US11150000B2.pdf",
+      "size_bytes": 1983147,
+      "page_count": 26
+    }
+  ],
+  "Generative AI": [
+    {
+      "patent_id": "US11250000B2",
+      "local_path": "uploads\\pdfs\\US11250000B2.pdf",
+      "size_bytes": 1891076,
+      "page_count": 17
+    },
+    {
+      "patent_id": "US11350000B2",
+      "local_path": "uploads\\pdfs\\US11350000B2.pdf",
+      "size_bytes": 2436561,
+      "page_count": 29
+    },
+    {
+      "patent_id": "US11450000B2",
+      "local_path": "uploads\\pdfs\\US11450000B2.pdf",
+      "size_bytes": 4377357,
+      "page_count": 31
+    },
+    {
+      "patent_id": "US11550000B2",
+      "local_path": "uploads\\pdfs\\US11550000B2.pdf",
+      "size_bytes": 2074116,
+      "page_count": 23
+    },
+    {
+      "patent_id": "US11650000B2",
+      "local_path": "uploads\\pdfs\\US11650000B2.pdf",
+      "size_bytes": 1097157,
+      "page_count": 14
+    }
+  ],
+  "AI Infrastructure": [
+    {
+      "patent_id": "US10150000B2",
+      "local_path": "uploads\\pdfs\\US10150000B2.pdf",
+      "size_bytes": 1394942,
+      "page_count": 20
+    },
+    {
+      "patent_id": "US10250000B2",
+      "local_path": "uploads\\pdfs\\US10250000B2.pdf",
+      "size_bytes": 1001155,
+      "page_count": 18
+    },
+    {
+      "patent_id": "US10350000B2",
+      "local_path": "uploads\\pdfs\\US10350000B2.pdf",
+      "size_bytes": 3191816,
+      "page_count": 37
+    },
+    {
+      "patent_id": "US10450000B2",
+      "local_path": "uploads\\pdfs\\US10450000B2.pdf",
+      "size_bytes": 1270566,
+      "page_count": 13
+    },
+    {
+      "patent_id": "US10550000B2",
+      "local_path": "uploads\\pdfs\\US10550000B2.pdf",
+      "size_bytes": 5581422,
+      "page_count": 49
+    }
+  ],
+  "Vector Database": [
+    {
+      "patent_id": "US11750000B2",
+      "local_path": "uploads\\pdfs\\US11750000B2.pdf",
+      "size_bytes": 1057202,
+      "page_count": 14
+    },
+    {
+      "patent_id": "US11850000B2",
+      "local_path": "uploads\\pdfs\\US11850000B2.pdf",
+      "size_bytes": 1818872,
+      "page_count": 25
+    },
+    {
+      "patent_id": "US11950000B2",
+      "local_path": "uploads\\pdfs\\US11950000B2.pdf",
+      "size_bytes": 1036776,
+      "page_count": 16
+    },
+    {
+      "patent_id": "US12150000B2",
+      "local_path": "uploads\\pdfs\\US12150000B2.pdf",
+      "size_bytes": 1733560,
+      "page_count": 24
+    }
+  ],
+  "Edge AI": [
+    {
+      "patent_id": "US10650000B2",
+      "local_path": "uploads\\pdfs\\US10650000B2.pdf",
+      "size_bytes": 10150684,
+      "page_count": 65
+    },
+    {
+      "patent_id": "US10850000B2",
+      "local_path": "uploads\\pdfs\\US10850000B2.pdf",
+      "size_bytes": 2013356,
+      "page_count": 22
+    },
+    {
+      "patent_id": "US10950000B2",
+      "local_path": "uploads\\pdfs\\US10950000B2.pdf",
+      "size_bytes": 882199,
+      "page_count": 10
+    },
+    {
+      "patent_id": "US11050000B2",
+      "local_path": "uploads\\pdfs\\US11050000B2.pdf",
+      "size_bytes": 1317418,
+      "page_count": 14
+    }
+  ],
+  "Robotics": [
+    {
+      "patent_id": "US10050000B2",
+      "local_path": "uploads\\pdfs\\US10050000B2.pdf",
+      "size_bytes": 1086217,
+      "page_count": 11
+    },
+    {
+      "patent_id": "US10150000B2",
+      "local_path": "uploads\\pdfs\\US10150000B2.pdf",
+      "size_bytes": 1394942,
+      "page_count": 20
+    },
+    {
+      "patent_id": "US10250000B2",
+      "local_path": "uploads\\pdfs\\US10250000B2.pdf",
+      "size_bytes": 1001155,
+      "page_count": 18
+    },
+    {
+      "patent_id": "US10350000B2",
+      "local_path": "uploads\\pdfs\\US10350000B2.pdf",
+      "size_bytes": 3191816,
+      "page_count": 37
+    },
+    {
+      "patent_id": "US10450000B2",
+      "local_path": "uploads\\pdfs\\US10450000B2.pdf",
+      "size_bytes": 1270566,
+      "page_count": 13
+    }
+  ],
+  "Autonomous Systems": [
+    {
+      "patent_id": "US10550000B2",
+      "local_path": "uploads\\pdfs\\US10550000B2.pdf",
+      "size_bytes": 5581422,
+      "page_count": 49
+    },
+    {
+      "patent_id": "US10650000B2",
+      "local_path": "uploads\\pdfs\\US10650000B2.pdf",
+      "size_bytes": 10150684,
+      "page_count": 65
+    },
+    {
+      "patent_id": "US10850000B2",
+      "local_path": "uploads\\pdfs\\US10850000B2.pdf",
+      "size_bytes": 2013356,
+      "page_count": 22
+    },
+    {
+      "patent_id": "US10950000B2",
+      "local_path": "uploads\\pdfs\\US10950000B2.pdf",
+      "size_bytes": 882199,
+      "page_count": 10
+    }
+  ],
+  "Emerging Technologies": [
+    {
+      "patent_id": "US11050000B2",
+      "local_path": "uploads\\pdfs\\US11050000B2.pdf",
+      "size_bytes": 1317418,
+      "page_count": 14
+    },
+    {
+      "patent_id": "US11150000B2",
+      "local_path": "uploads\\pdfs\\US11150000B2.pdf",
+      "size_bytes": 1983147,
+      "page_count": 26
+    },
+    {
+      "patent_id": "US11250000B2",
+      "local_path": "uploads\\pdfs\\US11250000B2.pdf",
+      "size_bytes": 1891076,
+      "page_count": 17
+    },
+    {
+      "patent_id": "US11350000B2",
+      "local_path": "uploads\\pdfs\\US11350000B2.pdf",
+      "size_bytes": 2436561,
+      "page_count": 29
+    },
+    {
+      "patent_id": "US11450000B2",
+      "local_path": "uploads\\pdfs\\US11450000B2.pdf",
+      "size_bytes": 4377357,
+      "page_count": 31
+    }
+  ]
+}
