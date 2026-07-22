@@ -1,5 +1,5 @@
 """
-graph.py — PatentPilot AI LangGraph Workflow
+graph.py - PatentPilot AI LangGraph Workflow
 
 Wires the 11-stage pipeline in sequence per the locked AGENTS.md workflow:
 1.  user_query (FastAPI endpoint entry point)
@@ -21,6 +21,10 @@ from typing import Dict, Any
 from langgraph.graph import StateGraph, START, END
 from state import PatentPilotState
 
+from agents.planner import planner_agent_node
+from agents.search import search_agent_node_sync as search_agent_node
+from agents.document_processing import document_processing_agent_node
+
 
 # ── Passthrough Stub Nodes for all 11 Stages ─────────────────────────────────
 
@@ -29,31 +33,13 @@ def user_query_node(state: PatentPilotState) -> Dict[str, Any]:
     return {"user_query": state.get("user_query", "")}
 
 
-def planner_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 2: Planner agent — breaks query into search keywords."""
-    return {"search_keywords": state.get("search_keywords", [])}
-
-
-def search_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 3: Search agents (parallel) — PatentsView + Semantic Scholar."""
-    return {
-        "patent_results": state.get("patent_results", []),
-        "research_papers": state.get("research_papers", []),
-    }
-
-
-def document_processing_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 4: Document processing — PyMuPDF + PaddleOCR fallback."""
-    return {"raw_documents": state.get("raw_documents", [])}
-
-
 def entity_extraction_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 5: Entity extraction — claims, inventors, IPC codes, algorithms."""
+    """Stage 5: Entity extraction - claims, inventors, IPC codes, algorithms."""
     return {"technical_entities": state.get("technical_entities", [])}
 
 
 def vector_search_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 6: Embedding + vector search — ChromaDB, sentence-transformers."""
+    """Stage 6: Embedding + vector search - ChromaDB, sentence-transformers."""
     return {
         "embeddings_ready": state.get("embeddings_ready", False),
         "similarity_scores": state.get("similarity_scores", []),
@@ -61,7 +47,7 @@ def vector_search_agent_node(state: PatentPilotState) -> Dict[str, Any]:
 
 
 def knowledge_graph_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 7: Knowledge graph — Neo4j relationships."""
+    """Stage 7: Knowledge graph - Neo4j relationships."""
     return {"knowledge_graph_id": state.get("knowledge_graph_id", None)}
 
 
@@ -71,7 +57,7 @@ def similarity_prior_art_agent_node(state: PatentPilotState) -> Dict[str, Any]:
 
 
 def novelty_assessment_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 9: Novelty assessment agent — explainable score & evidence."""
+    """Stage 9: Novelty assessment agent - explainable score & evidence."""
     return {
         "novelty_score": state.get("novelty_score", None),
         "novelty_explanation": state.get("novelty_explanation", None),
@@ -84,7 +70,7 @@ def report_generation_agent_node(state: PatentPilotState) -> Dict[str, Any]:
 
 
 def human_approval_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 11: Human approval — approve / reject / request re-analysis."""
+    """Stage 11: Human approval - approve / reject / request re-analysis."""
     return {
         "approval_status": state.get("approval_status", "pending"),
         "approval_feedback": state.get("approval_feedback", None),

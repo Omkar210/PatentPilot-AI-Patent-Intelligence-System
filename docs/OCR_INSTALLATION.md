@@ -23,17 +23,20 @@ PatentPilot AI/
 To install and verify PaddleOCR inside the project virtual environment:
 
 ### Step 1: Activate Virtual Environment
+
 ```powershell
 # On Windows PowerShell
 venv\Scripts\activate
 ```
 
 ### Step 2: Install Packages
+
 ```powershell
 pip install rapidocr-onnxruntime pyclipper shapely --no-deps
 ```
 
 ### Step 3: Verify Installation
+
 ```powershell
 python -c "from rapidocr_onnxruntime import RapidOCR; engine = RapidOCR(); print('✓ PaddleOCR engine initialized successfully!')"
 ```

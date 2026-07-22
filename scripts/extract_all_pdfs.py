@@ -2,7 +2,7 @@
 scripts/extract_all_pdfs.py — Extract & Save Structured Text for Every Downloaded Patent PDF
 
 Iterates over all downloaded patent PDFs in uploads/pdfs/, extracts:
-- Full page-by-page text
+- Full page-by-page text with OCR fallback for scanned pages
 - Abstract section
 - Claims section
 - Inventors / Patent metadata
@@ -18,13 +18,16 @@ import sys
 from pathlib import Path
 import fitz  # PyMuPDF
 
+sys.path.insert(0, ".")
+from ingestion.ocr_fallback import extract_page_ocr
+
 PDF_DIR = Path("uploads/pdfs")
 EXTRACTED_DIR = Path("data/extracted_documents")
 EXTRACTED_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def parse_patent_pdf(pdf_path: Path) -> dict:
-    """Extracts structured sections and text from a patent PDF using PyMuPDF."""
+    """Extracts structured sections and text from a patent PDF using PyMuPDF + OCR fallback."""
     doc = fitz.open(pdf_path)
     patent_id = pdf_path.stem
     
@@ -33,6 +36,12 @@ def parse_patent_pdf(pdf_path: Path) -> dict:
     
     for i, page in enumerate(doc):
         text = page.get_text("text")
+        # If page has near-empty text (scanned image page), apply OCR fallback
+        if len(text.strip()) < 50:
+            ocr_text = extract_page_ocr(page)
+            if len(ocr_text.strip()) > len(text.strip()):
+                text = ocr_text
+
         pages_text.append({
             "page_number": i + 1,
             "text": text,
@@ -74,7 +83,7 @@ def parse_patent_pdf(pdf_path: Path) -> dict:
 
 
 def main():
-    print("=== Extracting & Saving Information for Every Patent PDF ===")
+    print("=== Extracting & Saving Information for Every Patent PDF (with OCR Fallback) ===")
     pdf_files = list(PDF_DIR.glob("*.pdf"))
     print(f"Found {len(pdf_files)} PDF files in {PDF_DIR}\n")
     
