@@ -24,9 +24,11 @@ from state import PatentPilotState
 from agents.planner import planner_agent_node
 from agents.search import search_agent_node_sync as search_agent_node
 from agents.document_processing import document_processing_agent_node
+from agents.vector_search import vector_search_agent_node
+from agents.knowledge_graph import knowledge_graph_agent_node
 
 
-# ── Passthrough Stub Nodes for all 11 Stages ─────────────────────────────────
+# ── Passthrough Stub Nodes for remaining stages ──────────────────────────────
 
 def user_query_node(state: PatentPilotState) -> Dict[str, Any]:
     """Stage 1: User Query submission endpoint entry point."""
@@ -38,20 +40,8 @@ def entity_extraction_agent_node(state: PatentPilotState) -> Dict[str, Any]:
     return {"technical_entities": state.get("technical_entities", [])}
 
 
-def vector_search_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 6: Embedding + vector search - ChromaDB, sentence-transformers."""
-    return {
-        "embeddings_ready": state.get("embeddings_ready", False),
-        "similarity_scores": state.get("similarity_scores", []),
-    }
-
-
-def knowledge_graph_agent_node(state: PatentPilotState) -> Dict[str, Any]:
-    """Stage 7: Knowledge graph - Neo4j relationships."""
-    return {"knowledge_graph_id": state.get("knowledge_graph_id", None)}
-
-
 def similarity_prior_art_agent_node(state: PatentPilotState) -> Dict[str, Any]:
+
     """Stage 8: Similarity & prior art agent."""
     return {"prior_art": state.get("prior_art", [])}
 
@@ -99,10 +89,10 @@ builder.add_edge(START, "user_query")
 builder.add_edge("user_query", "planner")
 builder.add_edge("planner", "search")
 builder.add_edge("search", "document_processing")
-builder.add_edge("document_processing", "entity_extraction")
-builder.add_edge("entity_extraction", "vector_search")
+builder.add_edge("document_processing", "vector_search")
 builder.add_edge("vector_search", "knowledge_graph")
-builder.add_edge("knowledge_graph", "similarity_prior_art")
+builder.add_edge("knowledge_graph", "entity_extraction")
+builder.add_edge("entity_extraction", "similarity_prior_art")
 builder.add_edge("similarity_prior_art", "novelty_assessment")
 builder.add_edge("novelty_assessment", "report_generation")
 builder.add_edge("report_generation", "human_approval")
