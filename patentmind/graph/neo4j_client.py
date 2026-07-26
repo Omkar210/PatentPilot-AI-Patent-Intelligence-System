@@ -1,8 +1,14 @@
 import os
 import logging
 from typing import List, Dict, Any, Optional
-from neo4j import GraphDatabase
 from dotenv import load_dotenv
+
+try:
+    from neo4j import GraphDatabase
+    NEO4J_AVAILABLE = True
+except ImportError:
+    GraphDatabase = None
+    NEO4J_AVAILABLE = False
 
 load_dotenv()
 logger = logging.getLogger("PatentMindGraph")
@@ -20,6 +26,10 @@ class Neo4jClient:
         self.user = os.getenv("NEO4J_USER", "neo4j")
         self.password = os.getenv("NEO4J_PASSWORD", "patentpassword")
         self.driver = None
+
+        if not NEO4J_AVAILABLE:
+            logger.warning("neo4j module not installed. Graph features unavailable.")
+            return
 
         try:
             self.driver = GraphDatabase.driver(

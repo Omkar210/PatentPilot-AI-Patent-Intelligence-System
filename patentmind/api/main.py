@@ -193,6 +193,158 @@ def get_patent_graph(patent_number: str):
     except Exception as e:
         return {"patent_number": patent_number, "error": str(e), "inventors": [], "assignees": [], "cpc_codes": []}
 
+@app.post("/api/compare-pdf")
+async def compare_pdf(paper: UploadFile = File(...)):
+    """
+    Dedicated PDF comparison endpoint.
+    1. Extracts text from uploaded PDF (PyMuPDF)
+    2. Cleans text
+    3. Encodes text and searches Qdrant for top-k semantically similar patents
+    4. For top matching patent numbers, fetches Neo4j knowledge graph data
+    5. Generates LLM novelty assessment combining semantic + graph evidence
+    Returns: {semantic_matches, graph_data, synthesis, llm_backend_used, vector_backend_used}
+    """
+    start_time = time.time()
+    paper_bytes = await paper.read()
+    
+    # 1. Extract and clean PDF text
+    from patentmind.processing.pdf_extractor import PDFExtractor
+    from patentmind.processing.cleaner import PatentTextCleaner
+    pages = PDFExtractor.extract_pages(paper_bytes)
+    raw_text = "\n".join([p["text"] for p in pages])
+    cleaned_text = PatentTextCleaner.clean_text(raw_text)
+    
+    # 2. Semantic search via Qdrant
+    pipeline = get_rag_pipeline()
+    query_embedding = pipeline.encoder.batch_encode([cleaned_text[:2000]])[0]
+    hits = pipeline.vector_store.search(query_embedding, top_k=8)
+    
+    semantic_matches = []
+    seen_patents = set()
+    for hit in hits:
+        pn = hit["patent_number"]
+        score = hit["score"]
+        semantic_matches.append({
+            "patent_number": pn,
+            "section": hit["section_name"],
+            "score": score,
+            "chunk_text": hit["chunk_text"]
+        })
+        seen_patents.add(pn)
+    
+    # 3. Knowledge graph data for top matching patents
+    graph_data = {"shared_inventors": [], "shared_cpc": [], "assignee_portfolio": []}
+    try:
+        from patentmind.graph.neo4j_client import get_neo4j_client
+        neo4j = get_neo4j_client()
+        for pn in list(seen_patents)[:5]:
+            network = neo4j.get_patent_network(pn)
+            if network.get("inventors"):
+                graph_data["shared_inventors"].extend(
+                    [{"inventor": inv, "patent": pn, "title": network.get("title", "")} for inv in network["inventors"]]
+                )
+            if network.get("cpc_codes"):
+                for cpc in network["cpc_codes"]:
+                    related = neo4j.find_patents_by_cpc(cpc)
+                    graph_data["shared_cpc"].append({"code": cpc, "patent_count": len(related), "patents": related[:5]})
+            if network.get("assignees"):
+                for asg in network["assignees"]:
+                    graph_data["assignee_portfolio"].append({"assignee": asg, "patent": pn})
+    except Exception as e:
+        logger.warning(f"Graph data fetch error: {e}")
+    
+    # Deduplicate
+    seen_inv = set()
+    unique_inventors = []
+    for item in graph_data["shared_inventors"]:
+        key = (item["inventor"], item["patent"])
+        if key not in seen_inv:
+            seen_inv.add(key)
+            unique_inventors.append(item)
+    graph_data["shared_inventors"] = unique_inventors
+    
+    seen_cpc = set()
+    unique_cpc = []
+    for item in graph_data["shared_cpc"]:
+        if item["code"] not in seen_cpc:
+            seen_cpc.add(item["code"])
+            unique_cpc.append(item)
+    graph_data["shared_cpc"] = unique_cpc
+    
+    # 4. LLM Novelty Synthesis
+    synthesis_prompt = (
+        "You are a Patent Novelty Analyst. Given the following uploaded patent text and semantically similar existing patents, "
+        "provide a novelty assessment. Score novelty from 0 to 100. Identify the key novel elements not found in existing patents. "
+        "Cite specific patent numbers as evidence. Be concise but thorough.\n\n"
+        f"=== UPLOADED PATENT TEXT (excerpt) ===\n{cleaned_text[:3000]}\n\n"
+        f"=== TOP SEMANTIC MATCHES ===\n"
+    )
+    for m in semantic_matches[:5]:
+        synthesis_prompt += f"Patent {m['patent_number']} ({m['section']}, {m['score']:.0%} match): {m['chunk_text'][:200]}\n\n"
+    synthesis_prompt += "Provide your novelty assessment:"
+    
+    llm_response = pipeline.router.generate(synthesis_prompt)
+    
+    elapsed = round(time.time() - start_time, 2)
+    logger.info(f"PDF comparison completed in {elapsed}s")
+    
+    return {
+        "semantic_matches": semantic_matches,
+        "graph_data": graph_data,
+        "synthesis": {
+            "assessment": llm_response["answer"],
+            "llm_backend_used": llm_response["llm_backend_used"],
+            "elapsed_seconds": elapsed
+        },
+        "vector_backend_used": pipeline.vector_store.backend.upper(),
+        "total_elapsed": elapsed
+    }
+
+@app.get("/api/system-status")
+def get_system_status():
+    """Return live connectivity status for Qdrant, Ollama, Neo4j, and Groq."""
+    status = {}
+    
+    # Qdrant
+    try:
+        pipeline = get_rag_pipeline()
+        collections = pipeline.vector_store.qdrant_client.get_collections()
+        status["qdrant"] = {"status": "active", "collections": len(collections.collections)}
+    except Exception:
+        status["qdrant"] = {"status": "offline"}
+    
+    # Ollama
+    try:
+        import httpx
+        ollama_url = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+        with httpx.Client(timeout=3.0) as client:
+            r = client.get(f"{ollama_url}/api/tags")
+            if r.status_code == 200:
+                models = r.json().get("models", [])
+                status["ollama"] = {"status": "active", "models": [m["name"] for m in models]}
+            else:
+                status["ollama"] = {"status": "offline"}
+    except Exception:
+        status["ollama"] = {"status": "offline"}
+    
+    # Neo4j
+    try:
+        from patentmind.graph.neo4j_client import get_neo4j_client
+        neo4j = get_neo4j_client()
+        if neo4j.driver:
+            neo4j.driver.verify_connectivity()
+            status["neo4j"] = {"status": "active"}
+        else:
+            status["neo4j"] = {"status": "offline"}
+    except Exception:
+        status["neo4j"] = {"status": "offline"}
+    
+    # Groq
+    groq_key = os.getenv("GROQ_API_KEY", "")
+    status["groq"] = {"status": "standby" if groq_key else "no_key"}
+    
+    return status
+
 # Mount static files if frontend build exists
 frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
 if os.path.exists(frontend_dist):

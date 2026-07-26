@@ -27,17 +27,22 @@ class VectorStore:
                 timeout=5.0,
                 check_compatibility=False
             )
-            # Ensure collection exists
             collections = [c.name for c in self.qdrant_client.get_collections().collections]
             if self.collection_name not in collections:
                 self.qdrant_client.create_collection(
                     collection_name=self.collection_name,
                     vectors_config=VectorParams(size=384, distance=Distance.COSINE)
                 )
-            console.print(f"[bold green]Successfully initialized Qdrant collection '{self.collection_name}'[/bold green]")
+                console.print(f"[bold green]Created new Qdrant collection '{self.collection_name}'[/bold green]")
+            else:
+                try:
+                    count_info = self.qdrant_client.count(collection_name=self.collection_name)
+                    console.print(f"[bold green]Qdrant collection '{self.collection_name}' loaded ({count_info.count} vectors existing).[/bold green]")
+                except Exception:
+                    console.print(f"[bold green]Qdrant collection '{self.collection_name}' is ready.[/bold green]")
         except Exception as e:
-            console.print(f"[yellow]Qdrant client initialized in offline/in-memory mode for environment testing: {e}[/yellow]")
-            # Fallback to in-memory Qdrant instance if remote host is not reachable during local run
+            console.print(f"[bold red]⚠ Warning: Could not connect to Qdrant at {self.qdrant_host}:{self.qdrant_port}: {e}[/bold red]")
+            console.print("[dim]Falling back to temporary in-memory vector storage.[/dim]")
             self.qdrant_client = QdrantClient(":memory:", check_compatibility=False)
             self.qdrant_client.create_collection(
                 collection_name=self.collection_name,
@@ -95,6 +100,28 @@ class VectorStore:
                 "score": round(float(score), 4)
             })
         return results
+
+    def get_vector_count(self) -> int:
+        """Return total vector count in collection."""
+        try:
+            return self.qdrant_client.count(collection_name=self.collection_name).count
+        except Exception:
+            return 0
+
+    def get_existing_patent_numbers(self) -> set:
+        """Fetch set of unique patent_numbers stored in Qdrant payload in a single call."""
+        try:
+            if hasattr(self.qdrant_client, "scroll"):
+                res, _ = self.qdrant_client.scroll(
+                    collection_name=self.collection_name,
+                    limit=2000,
+                    with_payload=["patent_number"],
+                    with_vectors=False
+                )
+                return {p.payload.get("patent_number") for p in res if p.payload and "patent_number" in p.payload}
+        except Exception as e:
+            console.print(f"[yellow]Error fetching existing patent numbers from Qdrant: {e}[/yellow]")
+        return set()
 
     def patent_exists(self, patent_number: str) -> bool:
         """Check if a patent has already been vectorized in Qdrant."""

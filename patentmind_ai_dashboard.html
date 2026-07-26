@@ -1,0 +1,402 @@
+
+<h2 class="sr-only">PatentMind AI interactive dashboard mockup with sidebar navigation, patent PDF comparison tool, knowledge graph view, and AI query interface</h2>
+<style>
+.pm*{box-sizing:border-box;margin:0;padding:0}
+.pm{--br:#D4633C;--brd:#A84E2E;--brlt:#FAF0EA;--fg:#2A6349;--fglt:#E4F0EB;--am:#B87D1A;--amlt:#FDF3DF;display:flex;min-height:640px;border:0.5px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px;font-family:var(--font-sans)}
+.pm-side{width:210px;flex-shrink:0;background:var(--surface-1);border-right:0.5px solid var(--border);display:flex;flex-direction:column}
+.pm-logo{padding:18px 16px 14px;border-bottom:0.5px solid var(--border)}
+.pm-logomark{display:flex;align-items:center;gap:9px}
+.pm-logoicon{width:30px;height:30px;border-radius:8px;background:var(--br);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pm-logotxt{font-size:13px;font-weight:500;color:var(--text-primary);line-height:1.2}
+.pm-logosub{font-size:10px;color:var(--text-secondary);margin-top:2px}
+.pm-nav{padding:10px 8px;flex:1;overflow-y:auto}
+.pm-navs{font-size:10px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;padding:8px 8px 4px}
+.pm-ni{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;cursor:pointer;font-size:12.5px;color:var(--text-secondary);margin-bottom:1px;transition:background .12s,color .12s}
+.pm-ni:hover{background:var(--surface-2);color:var(--text-primary)}
+.pm-ni.act{background:var(--brlt);color:var(--brd)}
+.pm-ni.act i{color:var(--br)}
+.pm-ni i{font-size:15px;flex-shrink:0}
+.pm-sys{padding:12px 14px;border-top:0.5px solid var(--border)}
+.pm-syst{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.pm-sr{display:flex;align-items:center;gap:7px;margin-bottom:4px;font-size:11px;color:var(--text-secondary)}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dot-g{background:#2A6349}
+.dot-a{background:#B87D1A}
+.pm-main{flex:1;background:var(--surface-0);display:flex;flex-direction:column;overflow:hidden}
+.pm-sc{display:none;flex:1;flex-direction:column;padding:22px 24px;overflow-y:auto}
+.pm-sc.act{display:flex}
+.pm-pt{font-size:17px;font-weight:500;color:var(--text-primary);margin-bottom:3px}
+.pm-ps{font-size:12px;color:var(--text-secondary);margin-bottom:18px}
+.pm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px}
+.pm-stat{background:var(--surface-2);border:0.5px solid var(--border);border-radius:9px;padding:13px 14px}
+.pm-snum{font-size:21px;font-weight:500;color:var(--text-primary);line-height:1}
+.pm-slbl{font-size:11px;color:var(--text-secondary);margin-top:4px}
+.pm-sdelta{font-size:11px;color:var(--fg);margin-top:3px}
+.pm-card{background:var(--surface-2);border:0.5px solid var(--border);border-radius:9px;padding:14px;margin-bottom:10px}
+.pm-ctitle{font-size:12px;font-weight:500;color:var(--text-primary);margin-bottom:10px}
+.pm-tbl{width:100%;border-collapse:collapse}
+.pm-tbl th{font-size:10.5px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em;padding:7px 10px;border-bottom:1px solid var(--border-strong);text-align:left}
+.pm-tbl td{font-size:11.5px;color:var(--text-primary);padding:8px 10px;border-bottom:0.5px solid var(--border);vertical-align:middle}
+.pm-tbl tr:last-child td{border-bottom:none}
+.pm-tbl tr:hover td{background:var(--surface-1)}
+.pm-drop{border:1.5px dashed var(--border-strong);border-radius:10px;padding:28px;text-align:center;cursor:pointer;margin-bottom:14px;transition:border-color .15s,background .15s}
+.pm-drop:hover{border-color:var(--br);background:var(--brlt)}
+.pm-drop i{font-size:26px;color:var(--text-secondary);display:block;margin-bottom:8px}
+.pm-droptr{font-size:13px;color:var(--text-secondary)}
+.pm-droph{font-size:11px;color:var(--text-muted);margin-top:4px}
+.pm-file{display:none;align-items:center;gap:10px;padding:11px 14px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;margin-bottom:14px}
+.pm-file.show{display:flex}
+.pm-opttitle{font-size:12px;font-weight:500;color:var(--text-primary);margin-bottom:8px}
+.pm-opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;margin-bottom:7px;cursor:pointer;transition:border-color .15s,background .15s}
+.pm-opt.sel{border-color:var(--br);background:var(--brlt)}
+.pm-optchk{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border-strong);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:background .12s}
+.pm-opt.sel .pm-optchk{background:var(--br);border-color:var(--br)}
+.pm-opth{font-size:13px;font-weight:500;color:var(--text-primary)}
+.pm-optd{font-size:11px;color:var(--text-secondary);margin-top:2px;line-height:1.45}
+.pm-btns{display:flex;gap:8px;margin-top:4px}
+.pm-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:background .15s}
+.pm-btnp{background:var(--br);color:#fff}
+.pm-btnp:hover{background:var(--brd)}
+.pm-btng{background:var(--surface-2);color:var(--text-primary);border:0.5px solid var(--border)}
+.pm-btng:hover{background:var(--surface-1)}
+.pm-tabs{display:flex;border-bottom:0.5px solid var(--border);margin-bottom:14px}
+.pm-tab{padding:7px 13px;font-size:12px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;transition:color .12s}
+.pm-tab.act{color:var(--br);border-bottom-color:var(--br)}
+.pm-mc{background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;padding:13px 14px;margin-bottom:8px}
+.pm-mh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px}
+.pm-mid{font-size:11px;font-weight:500;color:var(--br);font-family:var(--font-mono)}
+.pm-spill{font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
+.pm-mtitle{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:3px}
+.pm-mmeta{font-size:11px;color:var(--text-secondary)}
+.pm-sbar{height:3px;border-radius:2px;background:var(--border);margin-top:8px}
+.pm-sfill{height:100%;border-radius:2px}
+.pm-kgcard{background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;padding:13px 14px;margin-bottom:9px}
+.pm-kgtitle{font-size:12px;font-weight:500;color:var(--text-primary);margin-bottom:8px}
+.pm-kgrow{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:0.5px solid var(--border);flex-wrap:wrap}
+.pm-kgrow:last-child{border-bottom:none}
+.pm-kgtag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;white-space:nowrap}
+.pm-kgrel{font-size:11px;color:var(--text-muted);white-space:nowrap}
+.pm-kgtgt{font-size:11.5px;color:var(--text-primary)}
+.pm-syn{background:var(--surface-2);border:0.5px solid var(--border);border-left:3px solid var(--br);border-radius:8px;padding:15px;margin-bottom:10px}
+.pm-synlbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--brd);margin-bottom:7px}
+.pm-syntxt{font-size:12.5px;color:var(--text-primary);line-height:1.65}
+.pm-bbadge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:4px;background:var(--fglt);color:var(--fg);margin-top:9px;font-weight:500}
+.pm-barsec{display:flex;flex-direction:column;gap:6px}
+.pm-barrow{display:flex;align-items:center;gap:8px}
+.pm-barname{font-size:11px;color:var(--text-secondary);min-width:90px}
+.pm-bartrack{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.pm-barfill{height:100%;border-radius:2px}
+.pm-barnum{font-size:11px;color:var(--text-primary);font-weight:500;min-width:28px;text-align:right}
+.pm-novrow{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.pm-novnum{font-size:28px;font-weight:500;color:var(--br);line-height:1}
+.pm-novlbl{font-size:11px;color:var(--text-secondary)}
+.pm-twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=text],select,textarea{color:var(--text-primary);background:var(--surface-2);border:0.5px solid var(--border);border-radius:7px;font-family:var(--font-sans);outline:none}
+input[type=text]:focus,select:focus,textarea:focus{border-color:var(--br)}
+</style>
+
+<div class="pm">
+<div class="pm-side">
+  <div class="pm-logo">
+    <div class="pm-logomark">
+      <div class="pm-logoicon"><i class="ti ti-certificate" style="color:#fff;font-size:15px" aria-hidden="true"></i></div>
+      <div><div class="pm-logotxt">PatentMind AI</div><div class="pm-logosub">Patent Intelligence Platform</div></div>
+    </div>
+  </div>
+  <div class="pm-nav">
+    <div class="pm-navs">Overview</div>
+    <div class="pm-ni act" onclick="nav('dash',this)"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+    <div class="pm-ni" onclick="nav('browse',this)"><i class="ti ti-database" aria-hidden="true"></i>Patent Database</div>
+    <div class="pm-navs" style="margin-top:6px">Analysis</div>
+    <div class="pm-ni" onclick="nav('compare',this)"><i class="ti ti-files-diff" aria-hidden="true"></i>Compare PDF</div>
+    <div class="pm-ni" onclick="nav('query',this)"><i class="ti ti-sparkles" aria-hidden="true"></i>AI Query</div>
+    <div class="pm-ni" onclick="nav('kg',this)"><i class="ti ti-network" aria-hidden="true"></i>Knowledge Graph</div>
+  </div>
+  <div class="pm-sys">
+    <div class="pm-syst">System status</div>
+    <div class="pm-sr"><span class="dot dot-g"></span>Qdrant — active</div>
+    <div class="pm-sr"><span class="dot dot-g"></span>Qwen3-4B — loaded</div>
+    <div class="pm-sr"><span class="dot dot-g"></span>Neo4j — active</div>
+    <div class="pm-sr"><span class="dot dot-a"></span>Groq API — standby</div>
+    <div class="pm-sr" style="margin-top:6px;font-size:10px;color:var(--text-muted)">247 patents · 18.4k chunks</div>
+  </div>
+</div>
+
+<div class="pm-main">
+
+<!-- DASHBOARD -->
+<div class="pm-sc act" id="sc-dash">
+  <div class="pm-pt">Patent Intelligence Dashboard</div>
+  <div class="pm-ps">AI/ML domain · 247 patents indexed · Last ingestion 2 hours ago</div>
+  <div class="pm-stats">
+    <div class="pm-stat"><div class="pm-snum">247</div><div class="pm-slbl">Patents indexed</div><div class="pm-sdelta">↑ 47 this week</div></div>
+    <div class="pm-stat"><div class="pm-snum">3</div><div class="pm-slbl">Active sources</div><div class="pm-sdelta" style="color:var(--am)">USPTO · WIPO · Google</div></div>
+    <div class="pm-stat"><div class="pm-snum">18.4k</div><div class="pm-slbl">Chunks embedded</div><div class="pm-sdelta">Qdrant primary</div></div>
+    <div class="pm-stat"><div class="pm-snum">12</div><div class="pm-slbl">Queries today</div><div class="pm-sdelta">avg 1.8s response</div></div>
+  </div>
+  <div class="pm-card">
+    <div class="pm-ctitle">Recent queries</div>
+    <table class="pm-tbl">
+      <thead><tr><th>Query</th><th>Matches</th><th>Novelty</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td>Edge AI inference optimization</td><td>8 patents</td><td style="color:#2A6349;font-weight:500">82/100</td><td style="color:var(--text-secondary)">12 min ago</td></tr>
+        <tr><td>Transformer attention compression</td><td>11 patents</td><td style="color:#D4633C;font-weight:500">31/100</td><td style="color:var(--text-secondary)">1h ago</td></tr>
+        <tr><td>LLM quantization for mobile</td><td>6 patents</td><td style="color:#B87D1A;font-weight:500">57/100</td><td style="color:var(--text-secondary)">3h ago</td></tr>
+        <tr><td>Federated learning privacy</td><td>9 patents</td><td style="color:#2A6349;font-weight:500">74/100</td><td style="color:var(--text-secondary)">5h ago</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pm-twocol">
+    <div class="pm-card" style="margin-bottom:0">
+      <div class="pm-ctitle">Patents by source</div>
+      <div class="pm-barsec">
+        <div class="pm-barrow"><span class="pm-barname">USPTO</span><div class="pm-bartrack"><div class="pm-barfill" style="width:51%;background:#D4633C"></div></div><span class="pm-barnum">127</span></div>
+        <div class="pm-barrow"><span class="pm-barname">WIPO</span><div class="pm-bartrack"><div class="pm-barfill" style="width:32%;background:#2A6349"></div></div><span class="pm-barnum">78</span></div>
+        <div class="pm-barrow"><span class="pm-barname">Google Patents</span><div class="pm-bartrack"><div class="pm-barfill" style="width:17%;background:#B87D1A"></div></div><span class="pm-barnum">42</span></div>
+      </div>
+    </div>
+    <div class="pm-card" style="margin-bottom:0">
+      <div class="pm-ctitle">Top domains</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Large Language Models</span><span style="font-weight:500">64</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Computer Vision</span><span style="font-weight:500">48</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Agentic AI</span><span style="font-weight:500">39</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Edge AI</span><span style="font-weight:500">31</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">RAG Systems</span><span style="font-weight:500">28</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE -->
+<div class="pm-sc" id="sc-compare">
+  <div class="pm-pt">Compare Patent PDF</div>
+  <div class="pm-ps">Upload a patent PDF — compared against vector database and LangGraph knowledge graph in parallel</div>
+  <div class="pm-drop" onclick="onUpload()">
+    <i class="ti ti-upload" aria-hidden="true"></i>
+    <div class="pm-droptr">Drop your patent PDF here, or click to browse</div>
+    <div class="pm-droph">PDF up to 50 MB · PyMuPDF text layer first · PaddleOCR fallback for scanned pages</div>
+  </div>
+  <div class="pm-file" id="pm-file">
+    <i class="ti ti-file-type-pdf" style="color:#D4633C;font-size:20px" aria-hidden="true"></i>
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:500;color:var(--text-primary)">US20240127890A1_transformer_pruning.pdf</div>
+      <div style="font-size:11px;color:var(--text-secondary)">2.4 MB · Text layer detected · Ready for analysis</div>
+    </div>
+    <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#E4F0EB;color:#2A6349;font-weight:500">Ready</span>
+  </div>
+  <div class="pm-opttitle">Comparison strategy — select all that apply</div>
+  <div class="pm-opt sel" id="opt-db" onclick="togOpt('opt-db')">
+    <div class="pm-optchk"><i class="ti ti-check" style="color:#fff;font-size:10px" aria-hidden="true"></i></div>
+    <div><div class="pm-opth">Vector database — semantic similarity</div><div class="pm-optd">Embeds uploaded PDF and searches Qdrant for top-k cosine-similar patent chunks · captures semantic overlap even with different terminology</div></div>
+  </div>
+  <div class="pm-opt sel" id="opt-kg" onclick="togOpt('opt-kg')">
+    <div class="pm-optchk"><i class="ti ti-check" style="color:#fff;font-size:10px" aria-hidden="true"></i></div>
+    <div><div class="pm-opth">LangGraph knowledge graph — structural comparison</div><div class="pm-optd">LangGraph agent traverses Neo4j graph to find patents sharing inventors, assignees, IPC/CPC codes, or citation chains · finds structural prior art missed by semantic search</div></div>
+  </div>
+  <div class="pm-opt sel" id="opt-llm" onclick="togOpt('opt-llm')">
+    <div class="pm-optchk"><i class="ti ti-check" style="color:#fff;font-size:10px" aria-hidden="true"></i></div>
+    <div><div class="pm-opth">LLM synthesis — Qwen3-4B novelty assessment</div><div class="pm-optd">Qwen3-4B generates an explainable novelty score grounded in evidence from both branches above · Groq API fallback if Ollama unavailable</div></div>
+  </div>
+  <div class="pm-btns">
+    <button class="pm-btn pm-btnp" onclick="goResults()"><i class="ti ti-chart-dots" aria-hidden="true"></i>Run comparison</button>
+    <button class="pm-btn pm-btng" onclick="clearUp()">Clear</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="pm-sc" id="sc-results">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+    <div>
+      <div class="pm-pt">Comparison Results</div>
+      <div class="pm-ps" style="margin-bottom:4px">US20240127890A1 — Transformer pruning with dynamic attention sparsity</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0;padding-left:16px">
+      <div class="pm-novnum">47</div>
+      <div class="pm-novlbl">novelty / 100</div>
+    </div>
+  </div>
+  <div class="pm-tabs">
+    <div class="pm-tab act" onclick="goTab('ts',this)">Semantic matches</div>
+    <div class="pm-tab" onclick="goTab('tkg',this)">Knowledge graph</div>
+    <div class="pm-tab" onclick="goTab('tsyn',this)">LLM synthesis</div>
+  </div>
+
+  <div id="ts">
+    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px">Top 5 semantically similar patents — Qdrant vector search</div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">US11,847,203</span><span class="pm-spill" style="background:#FAF0EA;color:#A84E2E">94% match</span></div>
+      <div class="pm-mtitle">Sparse attention mechanisms for efficient transformer inference</div>
+      <div class="pm-mmeta">Google LLC · 2023 · G06N 3/04, G06F 17/16</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:94%;background:#D4633C"></div></div>
+    </div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">US11,704,589</span><span class="pm-spill" style="background:#FAF0EA;color:#A84E2E">88% match</span></div>
+      <div class="pm-mtitle">Dynamic neural network pruning via reinforcement learning</div>
+      <div class="pm-mmeta">Microsoft Corp · 2023 · G06N 3/08</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:88%;background:#D4633C"></div></div>
+    </div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">WO2023/198742</span><span class="pm-spill" style="background:#FDF3DF;color:#8A5C0F">71% match</span></div>
+      <div class="pm-mtitle">Magnitude-based weight pruning for transformer models</div>
+      <div class="pm-mmeta">Meta AI · 2023 · G06N 3/04</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:71%;background:#B87D1A"></div></div>
+    </div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">US11,562,041</span><span class="pm-spill" style="background:#E4F0EB;color:#1D5038">52% match</span></div>
+      <div class="pm-mtitle">Gradient-based attention head importance scoring</div>
+      <div class="pm-mmeta">IBM Corp · 2022 · G06N 3/04, G06N 20/00</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:52%;background:#2A6349"></div></div>
+    </div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">EP4,123,892</span><span class="pm-spill" style="background:#E4F0EB;color:#1D5038">41% match</span></div>
+      <div class="pm-mtitle">Structured sparsity for deep neural network acceleration</div>
+      <div class="pm-mmeta">NVIDIA Corp · 2022 · G06N 3/063</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:41%;background:#2A6349"></div></div>
+    </div>
+  </div>
+
+  <div id="tkg" style="display:none">
+    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px">LangGraph agent — Neo4j entity and citation graph traversal (2 hops)</div>
+    <div class="pm-kgcard">
+      <div class="pm-kgtitle">Shared inventors</div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FAF0EA;color:#A84E2E">Zhang, Wei</span><span class="pm-kgrel">→ co-inventor on →</span><span class="pm-kgtgt">US11,847,203 (Google LLC, 2023)</span></div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FAF0EA;color:#A84E2E">Zhang, Wei</span><span class="pm-kgrel">→ co-inventor on →</span><span class="pm-kgtgt">WO2023/198742 (Meta AI, 2023)</span></div>
+    </div>
+    <div class="pm-kgcard">
+      <div class="pm-kgtitle">Citation chain</div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#E4F0EB;color:#1D5038">Uploaded patent</span><span class="pm-kgrel">→ cites →</span><span class="pm-kgtgt">US11,847,203 · US11,704,589</span></div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#E4F0EB;color:#1D5038">US11,847,203</span><span class="pm-kgrel">→ cited by →</span><span class="pm-kgtgt">3 patents in database (forward citations)</span></div>
+    </div>
+    <div class="pm-kgcard">
+      <div class="pm-kgtitle">Shared IPC classifications</div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FDF3DF;color:#8A5C0F">G06N 3/04</span><span class="pm-kgrel">→ shared with →</span><span class="pm-kgtgt">4 patents in database</span></div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FDF3DF;color:#8A5C0F">G06F 17/16</span><span class="pm-kgrel">→ shared with →</span><span class="pm-kgtgt">2 patents in database</span></div>
+    </div>
+    <div class="pm-kgcard">
+      <div class="pm-kgtitle">Shared assignee portfolio</div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FAF0EA;color:#A84E2E">Google LLC</span><span class="pm-kgrel">→ holds →</span><span class="pm-kgtgt">14 patents in database across G06N domain</span></div>
+    </div>
+  </div>
+
+  <div id="tsyn" style="display:none">
+    <div class="pm-syn">
+      <div class="pm-synlbl">LLM novelty assessment</div>
+      <div class="pm-syntxt">The uploaded patent describes transformer pruning combining dynamic attention sparsity with input-adaptive masking. Semantic search retrieved US11,847,203 (Google, 2023) at 94% similarity — that patent covers sparse attention but applies a static sparsity schedule, not dynamic input-conditioned masking. US11,704,589 (Microsoft, 2023) at 88% uses RL to select heads for pruning but does not address per-token attention sparsity at inference time. The LangGraph traversal confirmed inventor Zhang, Wei co-invented US11,847,203, establishing direct prior art lineage — this is structural evidence not detectable via semantic similarity alone. Based on both branches, the primary novel element appears to be real-time dynamic masking conditioned on input complexity — not present in any retrieved patent. Recommended for legal review before filing.</div>
+      <div class="pm-bbadge"><i class="ti ti-cpu" style="font-size:12px" aria-hidden="true"></i>Qwen3-4B via Ollama · 1.4s · Qdrant + Neo4j sources</div>
+    </div>
+    <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;padding:11px 13px;font-size:11px;color:var(--text-secondary)">
+      <span style="font-weight:500;color:var(--text-primary)">Evidence sources:</span> US11,847,203 (claims §3) · US11,704,589 (abstract) · WO2023/198742 (claims 1–4) · Knowledge graph: inventor co-citation, IPC G06N 3/04 overlap, citation chain depth 2
+    </div>
+  </div>
+</div>
+
+<!-- BROWSE -->
+<div class="pm-sc" id="sc-browse">
+  <div class="pm-pt">Patent Database</div>
+  <div class="pm-ps">247 patents · 15 AI/ML domains · filter and explore</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input type="text" placeholder="Search titles, abstracts, inventors..." style="flex:1;padding:7px 11px;font-size:12.5px">
+    <select style="padding:7px 10px;font-size:12px"><option>All sources</option><option>USPTO</option><option>WIPO</option><option>Google Patents</option></select>
+    <select style="padding:7px 10px;font-size:12px"><option>All domains</option><option>LLMs</option><option>Computer Vision</option><option>Agentic AI</option><option>Edge AI</option></select>
+  </div>
+  <div class="pm-card" style="padding:0;overflow:hidden">
+    <table class="pm-tbl">
+      <thead><tr><th>Patent number</th><th>Title</th><th>Assignee</th><th>Domain</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;color:#D4633C">US11,847,203</td><td>Sparse attention for efficient transformers</td><td>Google LLC</td><td>LLMs</td><td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:#E4F0EB;color:#2A6349;font-weight:500">Embedded</span></td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;color:#D4633C">US11,704,589</td><td>Dynamic neural network pruning via RL</td><td>Microsoft Corp</td><td>Deep Learning</td><td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:#E4F0EB;color:#2A6349;font-weight:500">Embedded</span></td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;color:#D4633C">WO2023/198742</td><td>Magnitude-based weight pruning</td><td>Meta AI</td><td>LLMs</td><td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:#E4F0EB;color:#2A6349;font-weight:500">Embedded</span></td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;color:#D4633C">EP4,123,892</td><td>Structured sparsity for DNN acceleration</td><td>NVIDIA Corp</td><td>AI Infra</td><td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:#E4F0EB;color:#2A6349;font-weight:500">Embedded</span></td></tr>
+        <tr><td style="font-family:var(--font-mono);font-size:11px;color:#D4633C">US11,562,041</td><td>Gradient-based attention head importance</td><td>IBM Corp</td><td>LLMs</td><td><span style="font-size:11px;padding:2px 7px;border-radius:4px;background:#FDF3DF;color:#8A5C0F;font-weight:500">Processing</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- KG -->
+<div class="pm-sc" id="sc-kg">
+  <div class="pm-pt">Knowledge Graph</div>
+  <div class="pm-ps">Neo4j entity graph · LangGraph traversal agent · patent relationship explorer</div>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <input type="text" placeholder="Enter patent number or inventor name..." style="flex:1;padding:7px 11px;font-size:12.5px">
+    <button class="pm-btn pm-btnp"><i class="ti ti-search" aria-hidden="true"></i>Explore</button>
+  </div>
+  <div class="pm-twocol" style="margin-bottom:10px">
+    <div class="pm-card" style="margin-bottom:0">
+      <div class="pm-ctitle">Graph statistics</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Patent nodes</span><span style="font-weight:500">247</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Inventor nodes</span><span style="font-weight:500">891</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Assignee nodes</span><span style="font-weight:500">63</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">IPC/CPC nodes</span><span style="font-weight:500">142</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Citation edges</span><span style="font-weight:500">1,204</span></div>
+      </div>
+    </div>
+    <div class="pm-card" style="margin-bottom:0">
+      <div class="pm-ctitle">Top assignees by patents</div>
+      <div class="pm-barsec">
+        <div class="pm-barrow"><span class="pm-barname">Google LLC</span><div class="pm-bartrack"><div class="pm-barfill" style="width:57%;background:#D4633C"></div></div><span class="pm-barnum">14</span></div>
+        <div class="pm-barrow"><span class="pm-barname">Microsoft</span><div class="pm-bartrack"><div class="pm-barfill" style="width:44%;background:#B87D1A"></div></div><span class="pm-barnum">11</span></div>
+        <div class="pm-barrow"><span class="pm-barname">Meta AI</span><div class="pm-bartrack"><div class="pm-barfill" style="width:36%;background:#2A6349"></div></div><span class="pm-barnum">9</span></div>
+        <div class="pm-barrow"><span class="pm-barname">NVIDIA</span><div class="pm-bartrack"><div class="pm-barfill" style="width:28%;background:#2A6349"></div></div><span class="pm-barnum">7</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="pm-card" style="text-align:center;padding:28px;color:var(--text-secondary)">
+    <i class="ti ti-network" style="font-size:28px;display:block;margin-bottom:8px" aria-hidden="true"></i>
+    <div style="font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:4px">Interactive graph view</div>
+    <div style="font-size:12px">Enter a patent number above or run a PDF comparison to see its entity relationships rendered as an interactive graph.</div>
+  </div>
+</div>
+
+<!-- QUERY -->
+<div class="pm-sc" id="sc-query">
+  <div class="pm-pt">AI Query</div>
+  <div class="pm-ps">Natural language patent search — RAG pipeline with Qwen3-4B + Groq fallback</div>
+  <textarea placeholder="Ask anything about the patent database — e.g. 'What methods exist for reducing LLM memory usage at inference time?'" style="width:100%;min-height:80px;padding:11px;font-size:13px;resize:vertical;margin-bottom:10px;line-height:1.5"></textarea>
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="pm-btn pm-btnp"><i class="ti ti-sparkles" aria-hidden="true"></i>Ask PatentMind</button>
+    <button class="pm-btn pm-btng" onclick="nav('compare',document.querySelectorAll('.pm-ni')[2])"><i class="ti ti-files-diff" aria-hidden="true"></i>Compare a PDF instead</button>
+  </div>
+  <div class="pm-card">
+    <div class="pm-ctitle">How it works</div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#FAF0EA;color:#A84E2E;flex-shrink:0">1</span><div style="font-size:12px;color:var(--text-secondary)">Your query is preprocessed and embedded using sentence-transformers</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#FAF0EA;color:#A84E2E;flex-shrink:0">2</span><div style="font-size:12px;color:var(--text-secondary)">Qdrant retrieves the top-8 semantically similar patent chunks</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#FAF0EA;color:#A84E2E;flex-shrink:0">3</span><div style="font-size:12px;color:var(--text-secondary)">Context is assembled with patent number, section, and chunk text</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#FAF0EA;color:#A84E2E;flex-shrink:0">4</span><div style="font-size:12px;color:var(--text-secondary)">Qwen3-4B generates a grounded answer citing specific patent numbers · Groq fallback if Ollama is unavailable</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+function nav(id,el){
+  document.querySelectorAll('.pm-sc').forEach(s=>s.classList.remove('act'));
+  document.querySelectorAll('.pm-ni').forEach(n=>n.classList.remove('act'));
+  document.getElementById('sc-'+id).classList.add('act');
+  if(el)el.classList.add('act');
+}
+function goTab(id,el){
+  ['ts','tkg','tsyn'].forEach(t=>{var e=document.getElementById(t);if(e)e.style.display='none';});
+  document.querySelectorAll('#sc-results .pm-tab').forEach(t=>t.classList.remove('act'));
+  var e=document.getElementById(id);if(e)e.style.display='block';
+  if(el)el.classList.add('act');
+}
+function onUpload(){
+  document.getElementById('pm-file').classList.add('show');
+}
+function clearUp(){
+  document.getElementById('pm-file').classList.remove('show');
+}
+function togOpt(id){
+  document.getElementById(id).classList.toggle('sel');
+}
+function goResults(){
+  nav('results',null);
+  document.querySelectorAll('.pm-ni').forEach(n=>n.classList.remove('act'));
+}
+</script>

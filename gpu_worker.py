@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 import json
 import boto3
-from sentence_transformers import SentenceTransformer
+from patentmind.embeddings.encoder import get_encoder
 from patentmind.storage.s3_client import s3_client
 from patentmind.processing.ocr_engine import get_glm_ocr_engine
 from patentmind.processing.pdf_extractor import PDFExtractor
@@ -47,26 +47,35 @@ def run_gpu_worker():
         console.print(f"[red]Error scanning S3: {e}[/red]")
         return
     
-    # 2. Load Vector DB (Qdrant)
-    console.print("[cyan]Connecting to Qdrant...[/cyan]")
+    # 2. Check existing indexed patents in Qdrant (Single Bulk Check)
+    console.print("[cyan]Checking Qdrant vector index...[/cyan]")
     vector_store = get_vector_store()
+    existing_patents = vector_store.get_existing_patent_numbers()
+    total_vectors = vector_store.get_vector_count()
 
-    # 3. Load Embedder (Using CPU Fallback due to Blackwell sm_120 PyTorch crash)
-    console.print("[cyan]Loading SentenceTransformer (all-MiniLM-L6-v2) on CPU (Fallback)...[/cyan]")
-    embedder = SentenceTransformer('all-MiniLM-L6-v2', device='cpu')
+    # Map S3 keys to patent numbers and find unindexed keys
+    unindexed_items = []
+    for s3_key in pdf_keys:
+        pn = os.path.basename(s3_key).replace(".pdf", "").replace(".PDF", "")
+        if pn not in existing_patents:
+            unindexed_items.append((s3_key, pn))
+
+    if not unindexed_items and total_vectors > 0:
+        console.print(f"[bold green]✓ Qdrant already contains {total_vectors} vectors for all {len(pdf_keys)} patents. No new ingestion needed![/bold green]")
+        return
+
+    console.print(f"[cyan]Found {len(unindexed_items)} new unindexed PDFs to process (out of {len(pdf_keys)} total in S3).[/cyan]")
+
+    # 3. Load Embedder
+    console.print("[cyan]Loading EmbeddingEncoder...[/cyan]")
+    embedder = get_encoder()
 
     # 4. Load OCR & chunker
     ocr_engine = get_glm_ocr_engine() # PaddleOCR
     chunker = PatentChunker()
         
-    for s3_key in pdf_keys:
-        # Extract patent number from file name, e.g., dataset/0706.0550v1.pdf -> 0706.0550v1
-        patent_number = os.path.basename(s3_key).replace(".pdf", "").replace(".PDF", "")
+    for s3_key, patent_number in unindexed_items:
         console.print(f"\n[bold magenta]Processing Patent: {patent_number}[/bold magenta]")
-        
-        if vector_store.patent_exists(patent_number):
-            console.print(f"[yellow]Skipping {patent_number}, vectors already exist in Qdrant![/yellow]")
-            continue
         
         try:
             # Download from AWS S3 using our project's s3_client
@@ -100,10 +109,8 @@ def run_gpu_worker():
             )
             
             console.print(f"Generated {len(chunks)} chunks. Embedding and pushing to Qdrant...")
-            embeddings_list = []
-            for c in chunks:
-                emb = embedder.encode(c["chunk_text"]).tolist()
-                embeddings_list.append(emb)
+            chunk_texts = [c["chunk_text"] for c in chunks]
+            embeddings_list = embedder.batch_encode(chunk_texts)
 
             # Upsert all vectors to Qdrant
             if chunks:
