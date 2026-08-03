@@ -36,13 +36,13 @@ services:
 
   patentmind-api:
     build:
-      context: .
+      context: ./patentmind
       dockerfile: Dockerfile
     container_name: patentmind-api
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      - ./patentmind/.env
     environment:
       - DATABASE_URL=postgresql://patentuser:patentpass@postgres:5432/patentmind_db
       - NEO4J_URI=bolt://neo4j:7687

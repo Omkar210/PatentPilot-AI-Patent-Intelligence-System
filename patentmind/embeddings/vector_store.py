@@ -20,34 +20,39 @@ class VectorStore:
         self.backend = "qdrant"
 
         console.print(f"[bold blue]Connecting to Qdrant Vector DB at {self.qdrant_host}:{self.qdrant_port}...[/bold blue]")
-        try:
-            self.qdrant_client = QdrantClient(
-                host=self.qdrant_host,
-                port=self.qdrant_port,
-                timeout=5.0,
-                check_compatibility=False
-            )
-            collections = [c.name for c in self.qdrant_client.get_collections().collections]
-            if self.collection_name not in collections:
-                self.qdrant_client.create_collection(
-                    collection_name=self.collection_name,
-                    vectors_config=VectorParams(size=384, distance=Distance.COSINE)
+        import time
+        for attempt in range(1, 4):
+            try:
+                self.qdrant_client = QdrantClient(
+                    host=self.qdrant_host,
+                    port=self.qdrant_port,
+                    timeout=60.0
                 )
-                console.print(f"[bold green]Created new Qdrant collection '{self.collection_name}'[/bold green]")
-            else:
-                try:
-                    count_info = self.qdrant_client.count(collection_name=self.collection_name)
-                    console.print(f"[bold green]Qdrant collection '{self.collection_name}' loaded ({count_info.count} vectors existing).[/bold green]")
-                except Exception:
-                    console.print(f"[bold green]Qdrant collection '{self.collection_name}' is ready.[/bold green]")
-        except Exception as e:
-            console.print(f"[bold red]⚠ Warning: Could not connect to Qdrant at {self.qdrant_host}:{self.qdrant_port}: {e}[/bold red]")
-            console.print("[dim]Falling back to temporary in-memory vector storage.[/dim]")
-            self.qdrant_client = QdrantClient(":memory:", check_compatibility=False)
-            self.qdrant_client.create_collection(
-                collection_name=self.collection_name,
-                vectors_config=VectorParams(size=384, distance=Distance.COSINE)
-            )
+                collections = [c.name for c in self.qdrant_client.get_collections().collections]
+                if self.collection_name not in collections:
+                    self.qdrant_client.create_collection(
+                        collection_name=self.collection_name,
+                        vectors_config=VectorParams(size=384, distance=Distance.COSINE)
+                    )
+                    console.print(f"[bold green]Created new Qdrant collection '{self.collection_name}'[/bold green]")
+                else:
+                    try:
+                        count_info = self.qdrant_client.count(collection_name=self.collection_name)
+                        console.print(f"[bold green]Qdrant collection '{self.collection_name}' loaded ({count_info.count} vectors existing).[/bold green]")
+                    except Exception:
+                        console.print(f"[bold green]Qdrant collection '{self.collection_name}' is ready.[/bold green]")
+                break
+            except Exception as e:
+                console.print(f"[bold yellow][!] Qdrant connection attempt {attempt}/3 failed ({e}). Retrying...[/bold yellow]")
+                time.sleep(2.0)
+                if attempt == 3:
+                    console.print(f"[bold red][!] Warning: Could not connect to Qdrant at {self.qdrant_host}:{self.qdrant_port}: {e}[/bold red]")
+                    console.print("[dim]Falling back to temporary in-memory vector storage.[/dim]")
+                    self.qdrant_client = QdrantClient(":memory:")
+                    self.qdrant_client.create_collection(
+                        collection_name=self.collection_name,
+                        vectors_config=VectorParams(size=384, distance=Distance.COSINE)
+                    )
 
     def upsert(self, chunks: List[Dict[str, Any]], embeddings: List[List[float]]) -> str:
         import uuid
@@ -65,9 +70,21 @@ class VectorStore:
             point_id = str(uuid.uuid4())
             points.append(PointStruct(id=point_id, vector=emb, payload=payload))
         
-        self.qdrant_client.upsert(collection_name=self.collection_name, points=points)
-        console.print(f"[bold green]Successfully upserted {len(points)} vectors into Qdrant.[/bold green]")
-        return "qdrant"
+        import time
+        for attempt in range(1, 4):
+            try:
+                self.qdrant_client.upsert(collection_name=self.collection_name, points=points)
+                return "qdrant"
+            except Exception as e:
+                time.sleep(1.0)
+                try:
+                    self.qdrant_client = QdrantClient(host=self.qdrant_host, port=self.qdrant_port, timeout=60.0)
+                    self.qdrant_client.upsert(collection_name=self.collection_name, points=points)
+                    return "qdrant"
+                except Exception as e2:
+                    if attempt == 3:
+                        console.print(f"[bold red]❌ Qdrant upsert offline: {e2}[/bold red]")
+                        return "failed"
 
     def search(self, query_embedding: List[float], top_k: int = 5, section_filter: Optional[str] = None) -> List[Dict[str, Any]]:
         hits = []
@@ -109,19 +126,40 @@ class VectorStore:
             return 0
 
     def get_existing_patent_numbers(self) -> set:
-        """Fetch set of unique patent_numbers stored in Qdrant payload in a single call."""
+        """Fetch set of all unique patent_numbers stored in Qdrant payload and SQLite DB."""
+        existing = set()
         try:
+            # 1. Fast local database lookup
+            try:
+                from patentmind.db.session import SessionLocal
+                from patentmind.db.models import Patent
+                db = SessionLocal()
+                db_patents = {p[0] for p in db.query(Patent.patent_number).all()}
+                db.close()
+                if db_patents:
+                    existing.update(db_patents)
+            except Exception:
+                pass
+
+            # 2. Paginated scroll across Qdrant collection
             if hasattr(self.qdrant_client, "scroll"):
-                res, _ = self.qdrant_client.scroll(
-                    collection_name=self.collection_name,
-                    limit=2000,
-                    with_payload=["patent_number"],
-                    with_vectors=False
-                )
-                return {p.payload.get("patent_number") for p in res if p.payload and "patent_number" in p.payload}
+                next_page = None
+                while True:
+                    res, next_page = self.qdrant_client.scroll(
+                        collection_name=self.collection_name,
+                        limit=5000,
+                        offset=next_page,
+                        with_payload=["patent_number"],
+                        with_vectors=False
+                    )
+                    for p in res:
+                        if p.payload and "patent_number" in p.payload:
+                            existing.add(p.payload["patent_number"])
+                    if not next_page:
+                        break
         except Exception as e:
-            console.print(f"[yellow]Error fetching existing patent numbers from Qdrant: {e}[/yellow]")
-        return set()
+            console.print(f"[yellow]Error fetching existing patent numbers: {e}[/yellow]")
+        return existing
 
     def patent_exists(self, patent_number: str) -> bool:
         """Check if a patent has already been vectorized in Qdrant."""
@@ -134,8 +172,7 @@ class VectorStore:
                 )
             )
             return count_result.count > 0
-        except Exception as e:
-            console.print(f"[yellow]Error checking existence in Qdrant for {patent_number}: {e}[/yellow]")
+        except Exception:
             return False
 
 _vector_store_instance = None

@@ -111,9 +111,9 @@ def check_and_init_db():
     try:
         from patentmind.db.session import init_db
         init_db()
-        console.print("   [bold green]✓ Relational database initialized successfully (tables created/verified).[/bold green]")
+        console.print("   [bold green][OK] Relational database initialized successfully (tables created/verified).[/bold green]")
     except Exception as e:
-        console.print(f"   [bold red]✕ Database initialization error: {e}[/bold red]")
+        console.print(f"   [bold red][ERR] Database initialization error: {e}[/bold red]")
 
 def check_qdrant():
     console.print("\n[bold cyan]2. Qdrant Vector Engine Check[/bold cyan]")
@@ -123,9 +123,9 @@ def check_qdrant():
     try:
         from patentmind.embeddings.vector_store import get_vector_store
         vs = get_vector_store()
-        console.print(f"   [bold green]✓ Vector Store ready (Backend: {vs.backend.upper()})[/bold green]")
+        console.print(f"   [bold green][OK] Vector Store ready (Backend: {vs.backend.upper()})[/bold green]")
     except Exception as e:
-        console.print(f"   [bold red]✕ Vector Store error: {e}[/bold red]")
+        console.print(f"   [bold red][ERR] Vector Store error: {e}[/bold red]")
 
 def check_ollama():
     console.print("\n[bold cyan]3. Ollama LLM Engine Check[/bold cyan]")
@@ -138,13 +138,13 @@ def check_ollama():
             r = client.get(f"{ollama_url}/api/tags")
             if r.status_code == 200:
                 models = [m["name"] for m in r.json().get("models", [])]
-                console.print(f"   [bold green]✓ Ollama active. Installed models: {models}[/bold green]")
+                console.print(f"   [bold green][OK] Ollama active. Installed models: {models}[/bold green]")
                 is_running = True
     except Exception:
         pass
 
     if not is_running:
-        console.print(f"   [bold yellow]⚠ Ollama service not responding at {ollama_url}.[/bold yellow]")
+        console.print(f"   [bold yellow][!] Ollama service not responding at {ollama_url}.[/bold yellow]")
         console.print("   Automatic Fallback: LLMRouter will direct queries to [bold green]Groq API (llama-3.3-70b)[/bold green] when Ollama is unavailable.")
         
         # Try to launch local ollama serve if command exists
@@ -170,7 +170,7 @@ def check_neo4j():
         neo4j_host, neo4j_port = "localhost", 7687
 
     if not check_port(neo4j_host, neo4j_port, timeout=1.5):
-        console.print(f"   [dim]⚠ Neo4j offline ({neo4j_host}:{neo4j_port}) — graph features using simulated fallback.[/dim]")
+        console.print(f"   [dim][!] Neo4j offline ({neo4j_host}:{neo4j_port}) — graph features using simulated fallback.[/dim]")
         return
 
     # Port is open — attempt full driver connection
@@ -179,11 +179,11 @@ def check_neo4j():
         neo4j = get_neo4j_client()
         if neo4j.driver:
             stats = neo4j.get_graph_stats()
-            console.print(f"   [bold green]✓ Neo4j active at {neo4j_uri}. Graph stats: {stats}[/bold green]")
+            console.print(f"   [bold green][OK] Neo4j active at {neo4j_uri}. Graph stats: {stats}[/bold green]")
         else:
-            console.print("   [bold yellow]⚠ Neo4j driver offline. Graph features will return simulated responses.[/bold yellow]")
+            console.print("   [bold yellow][!] Neo4j driver offline. Graph features will return simulated responses.[/bold yellow]")
     except Exception:
-        console.print("   [bold yellow]⚠ Neo4j driver offline. Graph features will return simulated responses.[/bold yellow]")
+        console.print("   [bold yellow][!] Neo4j driver offline. Graph features will return simulated responses.[/bold yellow]")
 
 def run_optional_worker():
     console.print("\n[bold cyan]5. S3 Ingestion Worker — Checking for new patents...[/bold cyan]")
@@ -214,7 +214,7 @@ def run_optional_worker():
             new_patents = s3_patent_numbers - existing_patents
 
             if not new_patents:
-                console.print(f"   [bold green]✓ All {len(s3_patent_numbers)} S3 patents already indexed ({existing_count} vectors). No ingestion needed.[/bold green]")
+                console.print(f"   [bold green][OK] All {len(s3_patent_numbers)} S3 patents already indexed ({existing_count} vectors). No ingestion needed.[/bold green]")
                 return
             else:
                 console.print(f"   [cyan]Found {len(new_patents)} new unindexed patents — running ingestion worker...[/cyan]")
@@ -242,7 +242,7 @@ def print_summary_table(host: str, port: int):
     console.print(table)
 
 def launch_fastapi_server(host: str, port: int):
-    console.print(f"\n[bold green]🚀 Launching FastAPI Web Server on http://{host}:{port}...[/bold green]\n")
+    console.print(f"\n[bold green][START] Launching FastAPI Web Server on http://{host}:{port}...[/bold green]\n")
     import uvicorn
     uvicorn.run("patentmind.api.main:app", host=host, port=port, reload=False, log_level="info")
 

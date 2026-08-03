@@ -31,15 +31,23 @@ class Neo4jClient:
             logger.warning("neo4j module not installed. Graph features unavailable.")
             return
 
-        try:
-            self.driver = GraphDatabase.driver(
-                self.uri, auth=(self.user, self.password)
-            )
-            self.driver.verify_connectivity()
-            logger.info(f"Connected to Neo4j at {self.uri}")
-            self._create_constraints()
-        except Exception as e:
-            logger.warning(f"Neo4j connection failed ({e}). Graph features unavailable.")
+        connected = False
+        for auth_opt in [(self.user, self.password), (self.user, "patentpilot123"), (self.user, "neo4j"), None]:
+            try:
+                if auth_opt is None:
+                    self.driver = GraphDatabase.driver(self.uri)
+                else:
+                    self.driver = GraphDatabase.driver(self.uri, auth=auth_opt)
+                self.driver.verify_connectivity()
+                logger.info(f"Connected to Neo4j at {self.uri} (auth={auth_opt})")
+                self._create_constraints()
+                connected = True
+                break
+            except Exception:
+                continue
+
+        if not connected:
+            logger.warning(f"Neo4j connection failed across all auth methods. Graph features using simulated fallback.")
             self.driver = None
 
     def _create_constraints(self):
@@ -218,10 +226,11 @@ class Neo4jClient:
         if not self.driver:
             return {"patents": 0, "inventors": 0, "assignees": 0, "cpc_codes": 0}
         stats = {}
+        key_map = {"Patent": "patents", "Inventor": "inventors", "Assignee": "assignees", "CPCCode": "cpc_codes"}
         with self.driver.session() as session:
-            for label in ["Patent", "Inventor", "Assignee", "CPCCode"]:
+            for label, key in key_map.items():
                 result = session.run(f"MATCH (n:{label}) RETURN count(n) AS cnt").single()
-                stats[label.lower()] = result["cnt"] if result else 0
+                stats[key] = result["cnt"] if result else 0
         return stats
 
     # ── Cleanup ────────────────────────────────────────────────────

@@ -83,14 +83,14 @@ class TestEncoderHashFallback:
         from patentmind.embeddings.encoder import DeterministicHashEncoder
 
         encoder = DeterministicHashEncoder()
-        embeddings = encoder.batch_encode(["test text one", "test text two"])
+        embeddings = encoder.encode(["test text one", "test text two"])
 
         assert len(embeddings) == 2
         assert len(embeddings[0]) == 384
         assert len(embeddings[1]) == 384
 
         # Deterministic: same input = same output
-        embeddings_again = encoder.batch_encode(["test text one"])
+        embeddings_again = encoder.encode(["test text one"])
         assert embeddings[0] == embeddings_again[0]
 
     def test_hash_encoder_different_inputs_different_outputs(self):
@@ -98,5 +98,5 @@ class TestEncoderHashFallback:
         from patentmind.embeddings.encoder import DeterministicHashEncoder
 
         encoder = DeterministicHashEncoder()
-        emb = encoder.batch_encode(["alpha beta", "gamma delta"])
+        emb = encoder.encode(["alpha beta", "gamma delta"])
         assert emb[0] != emb[1]

@@ -32,7 +32,7 @@ class S3StorageClient:
             self.mock_mode = True
 
     def upload_patent_pdf(self, patent_number: str, file_bytes: bytes) -> str:
-        s3_key = f"patents/{patent_number}.pdf"
+        s3_key = f"dataset/{patent_number}.pdf"
         retries = 3
         backoff = 1.0
 
@@ -57,12 +57,12 @@ class S3StorageClient:
                     local_path = os.path.join(self.local_storage_dir, f"{patent_number}.pdf")
                     with open(local_path, "wb") as f:
                         f.write(file_bytes)
-                    return f"local://patents/{patent_number}.pdf"
+                    return f"local://dataset/{patent_number}.pdf"
                 if attempt == retries:
                     local_path = os.path.join(self.local_storage_dir, f"{patent_number}.pdf")
                     with open(local_path, "wb") as f:
                         f.write(file_bytes)
-                    return f"local://patents/{patent_number}.pdf"
+                    return f"local://dataset/{patent_number}.pdf"
                 time.sleep(backoff)
                 backoff *= 2.0
 
@@ -70,7 +70,7 @@ class S3StorageClient:
 
     def download_patent_pdf(self, s3_key: str) -> bytes:
         if s3_key.startswith("local://"):
-            patent_filename = s3_key.replace("local://patents/", "")
+            patent_filename = s3_key.replace("local://dataset/", "")
             local_path = os.path.join(self.local_storage_dir, patent_filename)
             if os.path.exists(local_path):
                 with open(local_path, "rb") as f:
@@ -86,7 +86,7 @@ class S3StorageClient:
 
     def check_exists(self, s3_key: str) -> bool:
         if s3_key.startswith("local://"):
-            patent_filename = s3_key.replace("local://patents/", "")
+            patent_filename = s3_key.replace("local://dataset/", "")
             local_path = os.path.join(self.local_storage_dir, patent_filename)
             return os.path.exists(local_path)
 
