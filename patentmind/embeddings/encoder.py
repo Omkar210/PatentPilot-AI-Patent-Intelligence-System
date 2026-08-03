@@ -1,8 +1,14 @@
 import hashlib
 import math
-import torch
 from typing import List
 from rich.console import Console
+
+try:
+    import torch
+    TORCH_AVAILABLE = True
+except Exception:
+    torch = None
+    TORCH_AVAILABLE = False
 
 console = Console()
 
@@ -39,26 +45,37 @@ except Exception as e:
 
 class EmbeddingEncoder:
     """
-    SentenceTransformer all-MiniLM-L6-v2 GPU batch encoder with Hash fallback.
+    SentenceTransformer GPU batch encoder. Strictly uses CUDA when specified.
     """
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2", device: str = None, strict_gpu: bool = True):
+        if device is None:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        else:
+            self.device = device
+        self.strict_gpu = strict_gpu
         self.model = None
 
-        if SENTENCE_TRANSFORMERS_AVAILABLE:
-            console.print(f"[bold blue]Loading SentenceTransformer '{model_name}' on {self.device}...[/bold blue]")
-            try:
-                self.model = SentenceTransformer(model_name, device=self.device)
-            except Exception as e:
-                console.print(f"[yellow]SentenceTransformer device fallback: {e}[/yellow]")
+        if self.strict_gpu and self.device.startswith("cuda"):
+            if not TORCH_AVAILABLE or not torch.cuda.is_available():
+                console.print(f"[yellow]CUDA requested ({self.device}) but PyTorch/CUDA is unavailable. Using DeterministicHashEncoder fallback.[/yellow]")
+                self.model = DeterministicHashEncoder()
+            else:
                 try:
-                    self.model = SentenceTransformer(model_name, device="cpu")
-                except Exception as e2:
-                    console.print(f"[yellow]SentenceTransformer load failed: {e2}. Falling back to HashEncoder.[/yellow]")
+                    console.print(f"[bold green]Strict GPU Execution: Loading SentenceTransformer '{model_name}' on {self.device}...[/bold green]")
+                    self.model = SentenceTransformer(model_name, device=self.device)
+                except Exception as e:
+                    console.print(f"[yellow]SentenceTransformer load error ({e}). Using DeterministicHashEncoder fallback.[/yellow]")
                     self.model = DeterministicHashEncoder()
         else:
-            console.print("[bold yellow]SentenceTransformer unavailable — using DeterministicHashEncoder (384-dim).[/bold yellow]")
-            self.model = DeterministicHashEncoder()
+            if SENTENCE_TRANSFORMERS_AVAILABLE and TORCH_AVAILABLE:
+                console.print(f"[bold blue]Loading SentenceTransformer '{model_name}' on {self.device}...[/bold blue]")
+                try:
+                    self.model = SentenceTransformer(model_name, device=self.device)
+                except Exception as e:
+                    console.print(f"[yellow]SentenceTransformer load error: {e}[/yellow]")
+                    self.model = DeterministicHashEncoder()
+            else:
+                self.model = DeterministicHashEncoder()
 
     def batch_encode(self, texts: List[str], batch_size: int = 64) -> List[List[float]]:
         if not texts:
@@ -80,9 +97,9 @@ class EmbeddingEncoder:
 _encoder_instance = None
 
 
-def get_encoder() -> EmbeddingEncoder:
+def get_encoder(device: str = None) -> EmbeddingEncoder:
     global _encoder_instance
-    if _encoder_instance is None:
-        _encoder_instance = EmbeddingEncoder()
+    if _encoder_instance is None or (device and _encoder_instance.device != device):
+        _encoder_instance = EmbeddingEncoder(device=device)
     return _encoder_instance
 

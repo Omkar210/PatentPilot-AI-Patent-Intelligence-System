@@ -1,4 +1,4 @@
-# Environment variables / credentials
+# Environment variables / credentials / secrets
 .env
 .env.local
 .env.development.local
@@ -11,40 +11,89 @@
 .pypirc
 .npmrc
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
+# Python virtual environments & dependencies
 .venv/
 venv/
 ENV/
 env/
-.pytest_cache/
 
-# Databases & local stores
+# Python cache & compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Python testing & linting
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.tox/
+.coverage
+htmlcov/
+
+# Databases & local data stores
 *.db
 *.sqlite3
 chroma_data/
 qdrant_data/
 neo4j_data/
 
-# OS files
+# Log files
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / System files
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# IDE & Editor directories / configurations
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Large archives and binaries
 *.zip
 *.tar.gz
 *.tgz
 *.rar
+*.exe
+*.dll
+*.so
+*.dylib
 
-# Frontend / JS
+# Microsoft Office temp / lock files & reference files
+~$*.docx
+*.docx
+
+# Project-specific generated/demo outputs, inputs & test scripts
+demo_report.md
+extracted_prompt.txt
+extracted_output.json
+*Evaluation matrix*.md
+*evaluation_matrix*.md
+*Evaluation*.md
+*evaluation*.md
+*matrix*.md
+/test_*.py
+
+# Frontend / JS node modules & build outputs
 node_modules/
 dist/
+dist-ssr/
 build/
 .eslintcache
 .parcel-cache
 .cache/
 .next/
 out/
+
