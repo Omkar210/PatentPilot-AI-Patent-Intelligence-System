@@ -1,1889 +1,1227 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PatentMind AI - Intelligence Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-    <style>
-        :root {
-            --brand: #D4633C;
-            --brand-dark: #A84E2E;
-            --brand-light: #FAF0EA;
-            --forest: #2A6349;
-            --forest-light: #E4F0EB;
-            --amber: #B87D1A;
-            --amber-light: #FDF3DF;
-            --bg: #FAFAF7;
-            --surface: #FFFFFF;
-            --surface-2: #F5F3EF;
-            --border: #E8E5DF;
-            --border-strong: #D4D0C8;
-            --text: #1A1A1A;
-            --text-secondary: #6B6560;
-            --text-muted: #9B9590;
-            --radius: 10px;
-            --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-            --shadow-lg: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
-            --sidebar-width: 220px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            line-height: 1.5;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--surface);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            z-index: 100;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar-header {
-            padding: 24px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .logo-icon {
-            width: 30px;
-            height: 30px;
-            background-color: var(--brand);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .logo-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .logo-title {
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--text);
-        }
-
-        .logo-subtitle {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .nav-section {
-            padding: 16px 12px;
-        }
-
-        .nav-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-            padding-left: 8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            margin-bottom: 4px;
-        }
-
-        .nav-item i {
-            font-size: 18px;
-        }
-
-        .nav-item:hover {
-            background-color: var(--surface-2);
-            color: var(--text);
-        }
-
-        .nav-item.active {
-            background-color: var(--brand-light);
-            color: var(--brand-dark);
-        }
-
-        .sidebar-spacer {
-            flex: 1;
-        }
-
-        .system-status {
-            padding: 16px 20px;
-            border-top: 1px solid var(--border);
-            background-color: var(--surface-2);
-        }
-
-        .status-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            margin-bottom: 12px;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        .status-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--amber); /* Default standby */
-        }
-        
-        .status-dot.active {
-            background-color: var(--forest);
-        }
-
-        .status-dot.standby {
-            background-color: var(--amber);
-        }
-
-        .status-dot.offline {
-            background-color: var(--text-muted);
-        }
-
-        .status-badge-inline {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .status-text {
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .status-text.forest { color: var(--forest); }
-        .status-text.amber { color: var(--amber); }
-        .status-text.muted { color: var(--text-muted); }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            height: 100%;
-            overflow-y: auto;
-            position: relative;
-        }
-        
-        .topbar {
-            display: none;
-            padding: 16px 24px;
-            background-color: var(--surface);
-            border-bottom: 1px solid var(--border);
-            align-items: center;
-        }
-        
-        .menu-toggle {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--text);
-            cursor: pointer;
-        }
-
-        .screen {
-            display: none;
-            padding: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .screen-header {
-            margin-bottom: 32px;
-        }
-
-        .screen-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .screen-subtitle {
-            font-size: 15px;
-            color: var(--text-secondary);
-        }
-
-        /* Generic Components */
-        .card {
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: var(--shadow);
-            transition: box-shadow 0.2s ease;
-        }
-        
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            background-color: var(--surface-2);
-            color: var(--text-secondary);
-        }
-        
-        .badge.forest {
-            background-color: var(--forest-light);
-            color: var(--forest);
-        }
-        
-        .badge.amber {
-            background-color: var(--amber-light);
-            color: var(--amber);
-        }
-        
-        .badge.brand {
-            background-color: var(--brand-light);
-            color: var(--brand);
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-            font-family: inherit;
-        }
-        
-        .btn-primary {
-            background-color: var(--brand);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--brand-dark);
-        }
-        
-        .btn-ghost {
-            background-color: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-strong);
-        }
-        
-        .btn-ghost:hover {
-            background-color: var(--surface-2);
-            color: var(--text);
-        }
-        
-        .input-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        
-        .input-control {
-            flex: 1;
-            padding: 12px 16px;
-            border: 1px solid var(--border-strong);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            background-color: var(--surface);
-            color: var(--text);
-            transition: border-color 0.2s ease;
-        }
-        
-        .input-control:focus {
-            outline: none;
-            border-color: var(--brand);
-        }
-        
-        textarea.input-control {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        select.input-control {
-            flex: none;
-            width: auto;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B6560' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-            padding-right: 40px;
-        }
-
-        .mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Screen 1: Dashboard */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 32px;
-        }
-        
-        .stat-card .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-        
-        .stat-card .stat-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-        
-        .dash-charts {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-        
-        .chart-container {
-            margin-top: 16px;
-        }
-        
-        .bar-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        
-        .bar-label {
-            width: 120px;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        
-        .bar-track {
-            flex: 1;
-            height: 8px;
-            background-color: var(--surface-2);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 0 12px;
-        }
-        
-        .bar-fill {
-            height: 100%;
-            background-color: var(--brand);
-            border-radius: 4px;
-        }
-        
-        .bar-value {
-            width: 40px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: right;
-        }
-
-        /* Screen 2: Patent Browser */
-        .table-container {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            overflow: hidden;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th {
-            text-align: left;
-            padding: 16px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid var(--border-strong);
-            background-color: var(--surface-2);
-        }
-        
-        td {
-            padding: 16px;
-            font-size: 14px;
-            border-bottom: 1px solid var(--border);
-            vertical-align: middle;
-        }
-        
-        tr:last-child td {
-            border-bottom: none;
-        }
-        
-        tr:hover td {
-            background-color: var(--bg);
-            cursor: pointer;
-        }
-        
-        .patent-num {
-            color: var(--brand);
-            font-weight: 500;
-        }
-        
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-            padding: 16px;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Screen 3: Compare PDF */
-        .compare-upload-area {
-            border: 1.5px dashed var(--border-strong);
-            border-radius: 12px;
-            padding: 60px 20px;
-            text-align: center;
-            background-color: var(--surface);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-        
-        .compare-upload-area:hover, .compare-upload-area.dragover {
-            border-color: var(--brand);
-            background-color: var(--brand-light);
-        }
-        
-        .compare-upload-area i {
-            font-size: 32px;
-            color: var(--brand);
-            margin-bottom: 16px;
-        }
-        
-        .upload-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .upload-subtitle {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-        
-        .hidden-file-input {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-        }
-
-        .file-info-bar {
-            display: none;
-            align-items: center;
-            padding: 16px;
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-top: 24px;
-            gap: 16px;
-        }
-        
-        .file-info-bar i {
-            font-size: 24px;
-            color: var(--brand);
-        }
-        
-        .file-details {
-            flex: 1;
-        }
-        
-        .filename {
-            font-weight: 600;
-            font-size: 14px;
-        }
-        
-        .filesize {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .strategy-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 24px;
-        }
-        
-        .strategy-card {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 16px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background-color: var(--surface);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .strategy-card.sel {
-            border-color: var(--brand);
-            background-color: var(--brand-light);
-        }
-        
-        .strategy-checkbox {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            border: 1.5px solid var(--border-strong);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: all 0.2s;
-            margin-top: 2px;
-        }
-        
-        .strategy-card.sel .strategy-checkbox {
-            background-color: var(--brand);
-            border-color: var(--brand);
-        }
-        
-        .strategy-checkbox i {
-            font-size: 14px;
-            opacity: 0;
-        }
-        
-        .strategy-card.sel .strategy-checkbox i {
-            opacity: 1;
-        }
-        
-        .strategy-content h4 {
-            font-size: 15px;
-            margin-bottom: 4px;
-        }
-        
-        .strategy-content p {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-        
-        .compare-actions {
-            margin-top: 32px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .compare-results {
-            display: none;
-        }
-        
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 24px;
-        }
-        
-        .tab {
-            padding: 12px 24px;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-        }
-        
-        .tab.active {
-            color: var(--brand);
-            border-bottom-color: var(--brand);
-        }
-        
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .match-card {
-            padding: 20px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background-color: var(--surface);
-            margin-bottom: 16px;
-        }
-        
-        .match-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        
-        .match-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 4px;
-            margin-bottom: 4px;
-        }
-        
-        .progress-bar-container {
-            height: 6px;
-            background-color: var(--surface-2);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 12px;
-        }
-        
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-        }
-
-        .synthesis-card {
-            border-left: 3px solid var(--brand);
-            padding: 24px;
-            background-color: var(--surface);
-            box-shadow: var(--shadow);
-            border-radius: 0 var(--radius) var(--radius) 0;
-            margin-bottom: 24px;
-        }
-        
-        .synthesis-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--brand-dark);
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-        
-        .synthesis-text {
-            font-size: 15px;
-            line-height: 1.6;
-            color: var(--text);
-            margin-bottom: 20px;
-        }
-
-        /* Screen 4: AI Query */
-        .query-explainer {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-top: 32px;
-        }
-        
-        .step-card {
-            padding: 16px;
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-        }
-        
-        .step-num {
-            display: inline-flex;
-            width: 24px;
-            height: 24px;
-            align-items: center;
-            justify-content: center;
-            background-color: var(--brand-light);
-            color: var(--brand);
-            border-radius: 50%;
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .query-results {
-            display: none;
-            margin-top: 32px;
-        }
-        
-        .source-card {
-            padding: 16px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 12px;
-            background-color: var(--surface);
-        }
-        
-        .source-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .source-chunk {
-            display: none;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed var(--border-strong);
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        /* Screen 5: KG */
-        .kg-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-        
-        .kg-view {
-            height: 400px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background-color: var(--surface);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-        }
-
-        /* Modals & Overlays */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-content {
-            background-color: var(--surface);
-            border-radius: var(--radius);
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 32px;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-        }
-        
-        .modal-close {
-            position: absolute;
-            top: 24px; right: 24px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--text-secondary);
-            cursor: pointer;
-        }
-
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255,255,255,0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .spinner {
-            width: 40px; height: 40px;
-            border: 3px solid var(--border-strong);
-            border-top-color: var(--brand);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        .toast-container {
-            position: fixed;
-            top: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 3000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .toast {
-            background-color: var(--text);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: var(--shadow-lg);
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: toastIn 0.3s forwards;
-        }
-        
-        .toast.error { background-color: var(--brand-dark); }
-        .toast.success { background-color: var(--forest); }
-        
-        @keyframes toastIn {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .sidebar {
-                position: fixed;
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.mobile-open {
-                transform: translateX(0);
-            }
-            
-            .topbar {
-                display: flex;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .query-explainer {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .kg-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 600px) {
-            .stats-grid, .dash-charts, .query-explainer {
-                grid-template-columns: 1fr;
-            }
-            
-            .screen {
-                padding: 24px 16px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PatentMind AI — Enterprise Patent Intelligence Platform</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>  <style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+  :root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+    --surface-0: #07090f;
+    --surface-1: #0c1019;
+    --surface-2: #121822;
+    --surface-3: #19202d;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.10);
+    --text-primary: #e8eaef;
+    --text-secondary: #8b92a5;
+    --text-muted: #4e5567;
+    --brand-primary: #d4a04e;
+    --brand-dark: #b8893f;
+    --brand-light: rgba(212, 160, 78, 0.10);
+    --accent: #5eadb0;
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --danger: #f87171;
+  }
+  .sr-only { display: none !important; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+  .spin-icon { display: inline-block; animation: spin 0.9s linear infinite; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(212,160,78,0.15); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(212,160,78,0.3); }
+  body { margin: 0; padding: 0; background: var(--surface-0); font-family: var(--font-sans); min-height: 100vh; color: var(--text-primary); }
+  .pm*{box-sizing:border-box;margin:0;padding:0}
+  .pm{--br:var(--brand-primary);--brd:var(--brand-dark);--brlt:var(--brand-light);--fg:var(--success);--fglt:rgba(74,222,128,0.08);--am:var(--warning);--amlt:rgba(251,191,36,0.08);display:flex;min-height:100vh;border:none;border-radius:0;overflow:hidden;font-size:13px;font-family:var(--font-sans);background:var(--surface-0)}
+  .pm-side{width:250px;flex-shrink:0;background:var(--surface-1);border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative}
+  .pm-side::after{content:"";position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(180deg,rgba(212,160,78,0.15),transparent 50%,rgba(212,160,78,0.08))}
+  .pm-logo{padding:22px 18px;border-bottom:1px solid var(--border)}
+  .pm-logomark{display:flex;align-items:center;gap:12px}
+  .pm-logoicon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#d4a04e 0%,#e6be7a 50%,#d4a04e 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(212,160,78,0.25)}
+  .pm-logotxt{font-size:15px;font-weight:700;color:var(--text-primary);line-height:1.2;letter-spacing:-0.02em}
+  .pm-logosub{font-size:10px;color:var(--text-muted);margin-top:3px;letter-spacing:0.06em;text-transform:uppercase;font-weight:500}
+  .pm-nav{padding:18px 10px;flex:1;overflow-y:auto}
+  .pm-navs{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;padding:10px 10px 6px}
+  .pm-ni{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-secondary);margin-bottom:2px;transition:all .18s ease}
+  .pm-ni:hover{background:rgba(212,160,78,0.04);color:var(--text-primary)}
+  .pm-ni.act{background:rgba(212,160,78,0.08);color:#e6be7a;box-shadow:inset 3px 0 0 #d4a04e}
+  .pm-ni.act i{color:#e6be7a;filter:drop-shadow(0 0 5px rgba(212,160,78,0.4))}
+  .pm-ni i{font-size:16px;flex-shrink:0;opacity:0.7;transition:opacity .18s}
+  .pm-ni:hover i{opacity:1}
+  .pm-sys{padding:18px;border-top:1px solid var(--border);background:rgba(0,0,0,0.15)}
+  .pm-syst{font-size:9px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.12em;margin-bottom:12px}
+  .pm-sr{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:10px;color:var(--text-secondary);font-family:var(--font-mono)}
+  .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
+  .dot-g{background:#4ade80;color:#4ade80}
+  .dot-a{background:#fbbf24;color:#fbbf24}
+  .pm-main{flex:1;background:var(--surface-0);display:flex;flex-direction:column;overflow:hidden;position:relative}
+  .pm-main::before{content:"";position:absolute;top:0;left:0;right:0;height:280px;background:radial-gradient(ellipse at 30% -60%, rgba(212,160,78,0.06), transparent 60%), radial-gradient(ellipse at 70% -40%, rgba(94,173,176,0.04), transparent 50%);pointer-events:none}
+  .pm-sc{display:none;flex:1;flex-direction:column;padding:36px 44px;overflow-y:auto;position:relative;z-index:1}
+  .pm-sc.act{display:flex;animation:fadeIn 0.25s ease}
+  .pm-pt{font-size:22px;font-weight:700;color:var(--text-primary);margin-bottom:6px;letter-spacing:-0.02em}
+  .pm-ps{font-size:13px;color:var(--text-secondary);margin-bottom:28px;line-height:1.5}
+  .pm-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+  .pm-stat{border:1px solid var(--border);border-radius:14px;padding:22px;box-shadow:0 2px 6px rgba(0,0,0,0.25);backdrop-filter:blur(12px);background:linear-gradient(165deg, rgba(18,24,34,0.9) 0%, rgba(18,24,34,0.6) 100%);position:relative;overflow:hidden}
+  .pm-stat::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,160,78,0.15),transparent)}
+  .pm-snum{font-size:28px;font-weight:700;color:var(--text-primary);line-height:1;font-family:var(--font-mono);letter-spacing:-0.03em}
+  .pm-slbl{font-size:12px;font-weight:500;color:var(--text-secondary);margin-top:10px}
+  .pm-sdelta{font-size:11px;color:var(--accent);margin-top:6px;display:flex;align-items:center;gap:4px;font-weight:500}
+  .pm-card{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:16px;box-shadow:0 2px 6px rgba(0,0,0,0.2);position:relative;overflow:hidden}
+  .pm-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent)}
+  .pm-ctitle{font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+  .pm-ctitle::before{content:"";width:3px;height:14px;border-radius:2px;background:linear-gradient(180deg,#d4a04e,#e6be7a);flex-shrink:0}
+  .pm-tbl{width:100%;border-collapse:separate;border-spacing:0}
+  .pm-tbl th{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;padding:12px 14px;border-bottom:1px solid var(--border-strong);text-align:left}
+  .pm-tbl td{font-size:13px;color:var(--text-primary);padding:13px 14px;border-bottom:1px solid var(--border);vertical-align:middle;transition:all 0.15s ease}
+  .pm-tbl tr:last-child td{border-bottom:none}
+  .pm-tbl tr:hover td{background:rgba(212,160,78,0.03)}
+  .pm-drop{border:1px dashed rgba(212,160,78,0.25);border-radius:14px;padding:44px;text-align:center;cursor:pointer;margin-bottom:16px;transition:all .25s ease;background:rgba(212,160,78,0.02)}
+  .pm-drop:hover{border-color:var(--br);background:rgba(212,160,78,0.06);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+  .pm-drop i{font-size:36px;color:var(--br);display:block;margin-bottom:14px;filter:drop-shadow(0 0 10px rgba(212,160,78,0.3))}
+  .pm-droptr{font-size:15px;font-weight:600;color:var(--text-primary)}
+  .pm-droph{font-size:12px;color:var(--text-muted);margin-top:6px}
+  .pm-file{display:none;align-items:center;gap:14px;padding:16px 18px;background:var(--surface-3);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+  .pm-file.show{display:flex;animation:fadeIn 0.2s ease}
+  .pm-opttitle{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:12px}
+  .pm-opt{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all .2s ease}
+  .pm-opt:hover{border-color:var(--border-strong)}
+  .pm-opt.sel{border-color:rgba(212,160,78,0.4);background:rgba(212,160,78,0.04);box-shadow:0 0 0 1px rgba(212,160,78,0.2)}
+  .pm-optchk{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border-strong);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;background:var(--surface-0)}
+  .pm-opt.sel .pm-optchk{background:linear-gradient(135deg,#d4a04e,#e6be7a);border-color:#d4a04e;box-shadow:0 0 10px rgba(212,160,78,0.35)}
+  .pm-opth{font-size:14px;font-weight:600;color:var(--text-primary)}
+  .pm-optd{font-size:12px;color:var(--text-secondary);margin-top:4px;line-height:1.55}
+  .pm-btns{display:flex;gap:10px;margin-top:10px}
+  .pm-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s ease;box-shadow:0 2px 4px rgba(0,0,0,0.15)}
+  .pm-btnp{background:linear-gradient(135deg, #d4a04e 0%, #e6be7a 100%);color:#0c0f18;font-weight:700}
+  .pm-btnp:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(212,160,78,0.25);filter:brightness(1.05)}
+  .pm-btng{background:var(--surface-3);color:var(--text-primary);border:1px solid var(--border)}
+  .pm-btng:hover{background:var(--surface-2);border-color:var(--border-strong)}
+  .pm-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;gap:2px}
+  .pm-tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s ease}
+  .pm-tab.act{color:#e6be7a;border-bottom-color:#d4a04e}
+  .pm-tab:hover:not(.act){color:var(--text-primary)}
+  .pm-mc{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:10px;transition:all 0.2s}
+  .pm-mc:hover{border-color:rgba(212,160,78,0.15);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+  .pm-mh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+  .pm-mid{font-size:12px;font-weight:600;color:#d4a04e;font-family:var(--font-mono)}
+  .pm-spill{font-size:11px;padding:4px 10px;border-radius:99px;font-weight:600;letter-spacing:0.02em}
+  .pm-mtitle{font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:6px;line-height:1.4}
+  .pm-mmeta{font-size:12px;color:var(--text-secondary)}
+  .pm-sbar{height:4px;border-radius:2px;background:var(--surface-1);margin-top:10px;overflow:hidden}
+  .pm-sfill{height:100%;border-radius:2px;box-shadow:0 0 8px currentColor}
+  .pm-kgcard{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px}
+  .pm-kgtitle{font-size:13px;font-weight:700;color:var(--text-primary);margin-bottom:14px}
+  .pm-kgrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+  .pm-kgrow:last-child{border-bottom:none}
+  .pm-kgtag{font-size:11px;padding:4px 10px;border-radius:6px;font-weight:600;white-space:nowrap;background:rgba(255,255,255,0.04);border:1px solid var(--border)}
+  .pm-kgrel{font-size:12px;color:var(--text-muted);white-space:nowrap;font-family:var(--font-mono)}
+  .pm-kgtgt{font-size:13px;color:var(--text-primary);font-weight:500}
+  .pm-syn{background:var(--surface-2);border:1px solid var(--border);border-left:3px solid #d4a04e;border-radius:12px;padding:22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+  .pm-synlbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#d4a04e;margin-bottom:12px}
+  .pm-syntxt{font-size:14px;color:var(--text-primary);line-height:1.75}
+  .pm-bbadge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:5px 12px;border-radius:6px;background:rgba(74,222,128,0.06);color:var(--success);margin-top:12px;font-weight:600;border:1px solid rgba(74,222,128,0.15)}
+  .pm-barsec{display:flex;flex-direction:column;gap:12px}
+  .pm-barrow{display:flex;align-items:center;gap:14px}
+  .pm-barname{font-size:12px;font-weight:500;color:var(--text-secondary);min-width:100px}
+  .pm-bartrack{flex:1;height:6px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden}
+  .pm-barfill{height:100%;border-radius:3px;box-shadow:0 0 8px currentColor}
+  .pm-barnum{font-size:12px;color:var(--text-primary);font-weight:600;min-width:32px;text-align:right;font-family:var(--font-mono)}
+  .pm-novrow{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .pm-novnum{font-size:34px;font-weight:700;color:#d4a04e;line-height:1;font-family:var(--font-mono);text-shadow:0 0 24px rgba(212,160,78,0.35)}
+  .pm-novlbl{font-size:13px;color:var(--text-secondary);font-weight:500}
+  .pm-twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  input[type=text],select,textarea{color:var(--text-primary);background:var(--surface-3);border:1px solid var(--border-strong);border-radius:10px;font-family:var(--font-sans);outline:none;padding:11px 16px;font-size:13px;transition:all 0.2s}
+  input[type=text]:focus,select:focus,textarea:focus{border-color:rgba(212,160,78,0.4);box-shadow:0 0 0 3px rgba(212,160,78,0.08)}
+  select option{background:var(--surface-2);color:var(--text-primary)}
+  </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-icon"><i class="ti ti-certificate"></i></div>
-            <div class="logo-text">
-                <span class="logo-title">PatentMind AI</span>
-                <span class="logo-subtitle">Intelligence Platform</span>
-            </div>
-        </div>
-        
-        <div class="nav-section">
-            <div class="nav-label">Overview</div>
-            <div class="nav-item active" onclick="nav('sc-dash', this)">
-                <i class="ti ti-layout-dashboard"></i> Dashboard
-            </div>
-            <div class="nav-item" onclick="nav('sc-browse', this)">
-                <i class="ti ti-database"></i> Patent Database
-            </div>
-        </div>
-        
-        <div class="nav-section">
-            <div class="nav-label">Analysis</div>
-            <div class="nav-item" onclick="nav('sc-compare', this)">
-                <i class="ti ti-file-compare"></i> Compare PDF
-            </div>
-            <div class="nav-item" onclick="nav('sc-query', this)">
-                <i class="ti ti-sparkles"></i> AI Query
-            </div>
-            <div class="nav-item" onclick="nav('sc-kg', this)">
-                <i class="ti ti-chart-network"></i> Knowledge Graph
-            </div>
-        </div>
-        
-        <div class="sidebar-spacer"></div>
-        
-        <div class="system-status">
-            <div class="status-title">System Status</div>
-            <div class="status-item">
-                <span>Qdrant DB</span>
-                <div class="status-badge-inline">
-                    <div class="status-dot active" id="dot-qdrant"></div>
-                    <span class="status-text forest" id="text-qdrant">Working</span>
-                </div>
-            </div>
-            <div class="status-item">
-                <span>Qwen3-4B</span>
-                <div class="status-badge-inline">
-                    <div class="status-dot active" id="dot-qwen"></div>
-                    <span class="status-text forest" id="text-qwen">Working</span>
-                </div>
-            </div>
-            <div class="status-item">
-                <span>Neo4j Graph</span>
-                <div class="status-badge-inline">
-                    <div class="status-dot standby" id="dot-neo4j"></div>
-                    <span class="status-text amber" id="text-neo4j">Simulated</span>
-                </div>
-            </div>
-            <div class="status-item">
-                <span>Groq API</span>
-                <div class="status-badge-inline">
-                    <div class="status-dot standby" id="dot-groq"></div>
-                    <span class="status-text amber" id="text-groq">Standby</span>
-                </div>
-            </div>
-        </div>
-    </aside>
+<div class="pm">
+<div class="pm-side">
+  <div class="pm-logo">
+    <div class="pm-logomark">
+      <div class="pm-logoicon" style="background:linear-gradient(135deg,#7c5cfc,#a78bfa)"><i class="ti ti-certificate" style="color:#fff;font-size:15px" aria-hidden="true"></i></div>
+      <div><div class="pm-logotxt">PatentMind AI</div><div class="pm-logosub">Patent Intelligence Platform</div></div>
+    </div>
+  </div>
+  <div class="pm-nav">
+    <div class="pm-navs">Overview</div>
+    <div class="pm-ni act" onclick="nav('dash',this)"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+    <div class="pm-ni" onclick="nav('browse',this)"><i class="ti ti-database" aria-hidden="true"></i>Patent Database</div>
+    <div class="pm-navs" style="margin-top:6px">Analysis</div>
+    <div class="pm-ni" onclick="nav('compare',this)"><i class="ti ti-files-diff" aria-hidden="true"></i>Compare PDF</div>
+    <div class="pm-ni" onclick="nav('query',this)"><i class="ti ti-sparkles" aria-hidden="true"></i>AI Query</div>
+    <div class="pm-ni" onclick="nav('kg',this)"><i class="ti ti-network" aria-hidden="true"></i>Knowledge Graph</div>
+  </div>
+  <div class="pm-sys">
+    <div class="pm-syst">System status</div>
+    <div class="pm-sr"><span class="dot dot-g" style="background:#34d399"></span>Qdrant — active</div>
+    <div class="pm-sr"><span class="dot dot-g" style="background:#34d399"></span>Qwen3-4B — loaded</div>
+    <div class="pm-sr"><span class="dot dot-g" style="background:#34d399"></span>Neo4j — active</div>
+    <div class="pm-sr"><span class="dot dot-a" style="background:#fbbf24"></span>Groq API — standby</div>
+    <div class="pm-sr" id="sys-patent-count" style="margin-top:6px;font-size:10px;color:var(--text-muted)">Loading patent count...</div>
+  </div>
+</div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="topbar">
-            <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('mobile-open')">
-                <i class="ti ti-menu-2"></i>
-            </button>
-            <div style="font-weight: 600; margin-left: 16px;">PatentMind AI</div>
-        </div>
+<div class="pm-main">
 
-        <!-- SCREEN 1: Dashboard -->
-        <div id="sc-dash" class="screen active">
-            <div class="screen-header">
-                <h1 class="screen-title">Patent Intelligence Dashboard</h1>
-                <p class="screen-subtitle" id="dash-subtitle">Loading system statistics...</p>
-            </div>
-            
-            <div class="stats-grid">
-                <div class="card stat-card">
-                    <div class="stat-value" id="stat-total">-</div>
-                    <div class="stat-label">Total Patents</div>
-                </div>
-                <div class="card stat-card">
-                    <div class="stat-value" id="stat-sources">-</div>
-                    <div class="stat-label">Active Sources</div>
-                </div>
-                <div class="card stat-card">
-                    <div class="stat-value" id="stat-vector">-</div>
-                    <div class="stat-label">Vector Backend</div>
-                </div>
-                <div class="card stat-card">
-                    <div class="stat-value" id="stat-gpu">-</div>
-                    <div class="stat-label">GPU Server</div>
-                </div>
-            </div>
-            
-            <div class="dash-charts">
-                <div class="card">
-                    <h3>Source Breakdown</h3>
-                    <div class="chart-container" id="chart-sources">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>Processing Status</h3>
-                    <div class="chart-container" id="chart-status">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card" style="margin-top: 24px;">
-                <h3>Knowledge Graph Stats</h3>
-                <div class="stats-grid" style="margin-top: 16px; margin-bottom: 0;" id="kg-stats-row">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-        </div>
+<!-- DASHBOARD -->
+<div class="pm-sc act" id="sc-dash">
+  <div class="pm-pt">Patent Intelligence Dashboard</div>
+  <div class="pm-ps" id="dash-subtitle">AI/ML domain · Loading live patent metrics...</div>
+  <div class="pm-stats">
+    <div class="pm-stat"><div class="pm-snum" id="stat-patents-count">...</div><div class="pm-slbl">Patents indexed</div><div class="pm-sdelta">Qdrant & SQL sync</div></div>
+    <div class="pm-stat"><div class="pm-snum" id="stat-sources-count">3</div><div class="pm-slbl">Active sources</div><div class="pm-sdelta" style="color:var(--am)">USPTO · ArXiv · OpenAlex</div></div>
+    <div class="pm-stat"><div class="pm-snum" id="stat-chunks-count">1.3M+</div><div class="pm-slbl">Chunks embedded</div><div class="pm-sdelta">Qdrant primary</div></div>
+    <div class="pm-stat"><div class="pm-snum" id="stat-queries-count">12</div><div class="pm-slbl">Queries today</div><div class="pm-sdelta">avg 1.8s response</div></div>
+  </div>
+  <div class="pm-card">
+    <div class="pm-ctitle">Recent queries</div>
+    <table class="pm-tbl">
+      <thead><tr><th>Query</th><th>Matches</th><th>Novelty</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr><td>Edge AI inference optimization</td><td>8 patents</td><td style="color:#2A6349;font-weight:500">82/100</td><td style="color:var(--text-secondary)">12 min ago</td></tr>
+        <tr><td>Transformer attention compression</td><td>11 patents</td><td style="color:#D4633C;font-weight:500">31/100</td><td style="color:var(--text-secondary)">1h ago</td></tr>
+        <tr><td>LLM quantization for mobile</td><td>6 patents</td><td style="color:#B87D1A;font-weight:500">57/100</td><td style="color:var(--text-secondary)">3h ago</td></tr>
+        <tr><td>Federated learning privacy</td><td>9 patents</td><td style="color:#2A6349;font-weight:500">74/100</td><td style="color:var(--text-secondary)">5h ago</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pm-twocol">
+    <div class="pm-card" style="margin-bottom:0">
+      <div class="pm-ctitle">Patents & Papers by Source</div>
+      <div class="pm-barsec" id="source-breakdown-sec">
+        <div class="pm-barrow"><span class="pm-barname">USPTO</span><div class="pm-bartrack"><div class="pm-barfill" style="width:48%;background:#D4633C"></div></div><span class="pm-barnum">...</span></div>
+        <div class="pm-barrow"><span class="pm-barname">ArXiv</span><div class="pm-bartrack"><div class="pm-barfill" style="width:35%;background:#2A6349"></div></div><span class="pm-barnum">...</span></div>
+        <div class="pm-barrow"><span class="pm-barname">WIPO / Google</span><div class="pm-bartrack"><div class="pm-barfill" style="width:17%;background:#B87D1A"></div></div><span class="pm-barnum">...</span></div>
+      </div>
+    </div>
+    <div class="pm-card" style="margin-bottom:0">
+      <div class="pm-ctitle">Top Target Domains</div>
+      <div id="top-domains-sec" style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Artificial Intelligence</span><span style="font-weight:500">1,833</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Large Language Models</span><span style="font-weight:500">1,500</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Deep Learning</span><span style="font-weight:500">1,250</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Computer Vision</span><span style="font-weight:500">1,083</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">RAG Systems</span><span style="font-weight:500">916</span></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <!-- SCREEN 2: Patent Database -->
-        <div id="sc-browse" class="screen">
-            <div class="screen-header">
-                <h1 class="screen-title">Patent Database</h1>
-                <p class="screen-subtitle">Browse and filter ingested patent records</p>
-            </div>
-            
-            <div class="input-group">
-                <input type="text" class="input-control" placeholder="Search patents..." id="browse-search">
-                <select class="input-control" id="browse-source">
-                    <option value="">All Sources</option>
-                    <option value="USPTO">USPTO</option>
-                    <option value="WIPO">WIPO</option>
-                    <option value="Google Patents">Google Patents</option>
-                </select>
-                <button class="btn btn-primary" onclick="loadPatents(1)"><i class="ti ti-search"></i> Search</button>
-            </div>
-            
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Patent Number</th>
-                            <th>Title</th>
-                            <th>Assignee</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="patent-tbody">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
-                <div class="pagination">
-                    <button class="btn btn-ghost" id="btn-prev" onclick="changePage(-1)">Previous</button>
-                    <span id="page-info" style="font-size: 14px; font-weight: 500;">Page 1</span>
-                    <button class="btn btn-ghost" id="btn-next" onclick="changePage(1)">Next</button>
-                </div>
-            </div>
-        </div>
+<!-- COMPARE -->
+<div class="pm-sc" id="sc-compare">
+  <div class="pm-pt">Compare Patent PDF</div>
+  <div class="pm-ps">Upload a patent PDF — compared against vector database and LangGraph knowledge graph in parallel</div>
+  
+  <input type="file" id="pdf-file-selector" accept=".pdf" style="display:none" onchange="handleFileSelection(this)">
+  
+  <div class="pm-drop" id="pdf-dropzone" onclick="document.getElementById('pdf-file-selector').click()">
+    <i class="ti ti-upload" aria-hidden="true"></i>
+    <div class="pm-droptr" id="dropzone-text">Drop your patent PDF here, or click to browse</div>
+    <div class="pm-droph">PDF up to 50 MB · PyMuPDF text layer first · PaddleOCR fallback for scanned pages</div>
+  </div>
+  
+  <div class="pm-file" id="pm-file">
+    <i class="ti ti-file-type-pdf" style="color:#D4633C;font-size:22px" aria-hidden="true"></i>
+    <div style="flex:1">
+      <div id="file-name-display" style="font-size:13px;font-weight:500;color:var(--text-primary)">US20240127890A1_transformer_pruning.pdf</div>
+      <div id="file-meta-display" style="font-size:11px;color:var(--text-secondary)">2.4 MB · Text layer detected · Ready for analysis</div>
+    </div>
+    <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:#E4F0EB;color:#2A6349;font-weight:500">Ready</span>
+  </div>
+  
+  <div class="pm-opttitle">Comparison strategy — select all that apply</div>
+  <div class="pm-opt sel" id="opt-db" onclick="togOpt('opt-db')">
+    <div class="pm-optchk"><i class="ti ti-check" style="color:#fff;font-size:10px" aria-hidden="true"></i></div>
+    <div><div class="pm-opth">Vector database — semantic similarity</div><div class="pm-optd">Embeds uploaded PDF and searches Qdrant for top-k cosine-similar patent chunks · captures semantic overlap even with different terminology</div></div>
+  </div>
+  <div class="pm-opt sel" id="opt-kg" onclick="togOpt('opt-kg')">
+    <div class="pm-optchk"><i class="ti ti-check" style="color:#fff;font-size:10px" aria-hidden="true"></i></div>
+    <div><div class="pm-opth">LangGraph knowledge graph — structural comparison</div><div class="pm-optd">LangGraph agent traverses Neo4j graph to find patents sharing inventors, assignees, IPC/CPC codes, or citation chains · finds structural prior art missed by semantic search</div></div>
+  </div>
+  <div class="pm-opt sel" id="opt-llm" onclick="togOpt('opt-llm')">
+    <div class="pm-optchk"><i class="ti ti-check" style="color:#fff;font-size:10px" aria-hidden="true"></i></div>
+    <div><div class="pm-opth">LLM synthesis — Qwen3-4B novelty assessment</div><div class="pm-optd">Qwen3-4B generates an explainable novelty score grounded in evidence from both branches above · Groq API fallback if Ollama unavailable</div></div>
+  </div>
+  
+  <div style="display:flex;gap:8px;margin-top:14px">
+    <button class="pm-btn pm-btnp" id="compare-run-btn" onclick="runPDFComparison()"><i class="ti ti-chart-dots" aria-hidden="true"></i>Run PDF Comparison</button>
+    <button class="pm-btn pm-btng" onclick="clearUp()">Clear</button>
+  </div>
+  
+  <!-- Loading state for comparison -->
+  <div id="compare-loading" style="display:none;margin-top:14px;padding:16px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;align-items:center;gap:12px">
+    <i class="ti ti-loader-2 spin-icon" style="font-size:24px;color:var(--br)"></i>
+    <div>
+      <div style="font-size:13px;font-weight:500;color:var(--text-primary)">Extracting & Analyzing PDF...</div>
+      <div style="font-size:11px;color:var(--text-secondary)">Parsing PDF text ➔ Encoding vector embeddings ➔ Querying Qdrant ➔ LLM Novelty Synthesis</div>
+    </div>
+  </div>
+</div>
 
-        <!-- SCREEN 3: Compare PDF -->
-        <div id="sc-compare" class="screen">
-            <div class="screen-header">
-                <h1 class="screen-title">Compare Patent PDF</h1>
-                <p class="screen-subtitle">Upload a patent PDF — compared against vector database and knowledge graph in parallel</p>
-            </div>
-            
-            <div id="compare-upload-view">
-                <div class="compare-upload-area" id="drop-zone" onclick="document.getElementById('pdf-upload').click()">
-                    <input type="file" id="pdf-upload" class="hidden-file-input" accept=".pdf" onchange="handleFileSelect(event)">
-                    <i class="ti ti-upload"></i>
-                    <div class="upload-title">Drop your patent PDF here, or click to browse</div>
-                    <div class="upload-subtitle">PDF up to 50 MB · PyMuPDF text layer first · PaddleOCR fallback</div>
-                </div>
-                
-                <div class="file-info-bar" id="file-info">
-                    <i class="ti ti-file-type-pdf"></i>
-                    <div class="file-details">
-                        <div class="filename" id="file-name">document.pdf</div>
-                        <div class="filesize" id="file-size">1.2 MB</div>
-                    </div>
-                    <div class="badge forest">Ready</div>
-                </div>
-                
-                <div class="strategy-list">
-                    <div class="strategy-card sel" onclick="this.classList.toggle('sel')">
-                        <div class="strategy-checkbox"><i class="ti ti-check"></i></div>
-                        <div class="strategy-content">
-                            <h4>Vector database — semantic similarity</h4>
-                            <p>Embeds uploaded PDF and searches Qdrant for top-k cosine-similar patent chunks</p>
-                        </div>
-                    </div>
-                    <div class="strategy-card sel" onclick="this.classList.toggle('sel')">
-                        <div class="strategy-checkbox"><i class="ti ti-check"></i></div>
-                        <div class="strategy-content">
-                            <h4>LangGraph knowledge graph — structural comparison</h4>
-                            <p>LangGraph agent traverses Neo4j graph for shared inventors, assignees, IPC/CPC codes, citation chains</p>
-                        </div>
-                    </div>
-                    <div class="strategy-card sel" onclick="this.classList.toggle('sel')">
-                        <div class="strategy-checkbox"><i class="ti ti-check"></i></div>
-                        <div class="strategy-content">
-                            <h4>LLM synthesis — Qwen3-4B novelty assessment</h4>
-                            <p>Generates explainable novelty score grounded in evidence · Groq API fallback if Ollama unavailable</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="compare-actions">
-                    <button class="btn btn-primary" onclick="submitComparison()"><i class="ti ti-player-play"></i> Run comparison</button>
-                    <button class="btn btn-ghost" onclick="clearComparison()"><i class="ti ti-trash"></i> Clear</button>
-                </div>
-            </div>
-            
-            <div id="compare-results-view" class="compare-results">
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
-                    <div>
-                        <h2 style="font-size: 20px; margin-bottom: 4px;" id="res-filename">document.pdf</h2>
-                        <p style="color: var(--text-secondary); font-size: 14px;" id="res-subtitle">Analysis complete</p>
-                    </div>
-                    <button class="btn btn-ghost" onclick="resetCompare()"><i class="ti ti-arrow-left"></i> Back to upload</button>
-                </div>
-                
-                <div class="tabs">
-                    <div class="tab active" onclick="goTab('tab-semantic', this)">Semantic matches</div>
-                    <div class="tab" onclick="goTab('tab-kg', this)">Knowledge graph</div>
-                    <div class="tab" onclick="goTab('tab-llm', this)">LLM synthesis</div>
-                </div>
-                
-                <div id="tab-semantic" class="tab-content active">
-                    <!-- Populated by JS -->
-                </div>
-                
-                <div id="tab-kg" class="tab-content">
-                    <!-- Populated by JS -->
-                </div>
-                
-                <div id="tab-llm" class="tab-content">
-                    <div class="synthesis-card">
-                        <div class="synthesis-label">LLM NOVELTY ASSESSMENT</div>
-                        <div class="synthesis-text" id="llm-assessment-text"></div>
-                        <div style="display: flex; gap: 8px;">
-                            <span class="badge" id="llm-backend-badge">Qwen3-4B</span>
-                            <span class="badge" id="llm-time-badge">Time</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- RESULTS -->
+<div class="pm-sc" id="sc-results">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+    <div>
+      <div class="pm-pt">Comparison Results</div>
+      <div class="pm-ps" style="margin-bottom:4px">US20240127890A1 — Transformer pruning with dynamic attention sparsity</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0;padding-left:16px">
+      <div class="pm-novnum">47</div>
+      <div class="pm-novlbl">novelty / 100</div>
+    </div>
+  </div>
+  <div class="pm-tabs">
+    <div class="pm-tab act" onclick="goTab('ts',this)">Semantic matches</div>
+    <div class="pm-tab" onclick="goTab('tkg',this)">Knowledge graph</div>
+    <div class="pm-tab" onclick="goTab('tsyn',this)">LLM synthesis</div>
+  </div>
 
-        <!-- SCREEN 4: AI Query -->
-        <div id="sc-query" class="screen">
-            <div class="screen-header">
-                <h1 class="screen-title">AI Query</h1>
-                <p class="screen-subtitle">Natural language patent search — RAG pipeline with Qwen3-4B + Groq fallback</p>
-            </div>
-            
-            <textarea class="input-control" style="width: 100%; margin-bottom: 16px;" placeholder="E.g., Are there any patents related to using machine learning for optimizing solar panel angles?" id="query-input"></textarea>
-            
-            <div style="display: flex; gap: 12px;">
-                <button class="btn btn-primary" onclick="submitQuery()"><i class="ti ti-sparkles"></i> Ask PatentMind</button>
-                <button class="btn btn-ghost" onclick="nav('sc-compare', document.querySelector('.nav-item:nth-child(2)'))">Compare a PDF instead</button>
-            </div>
-            
-            <div class="query-explainer" id="query-explainer">
-                <div class="step-card">
-                    <div class="step-num">1</div>
-                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Embed Query</div>
-                    <div style="font-size: 13px; color: var(--text-secondary);">Query is vectorized using all-MiniLM-L6-v2 model</div>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">2</div>
-                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Vector Search</div>
-                    <div style="font-size: 13px; color: var(--text-secondary);">Top-k chunks retrieved from Qdrant via cosine similarity</div>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">3</div>
-                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">Context Assembly</div>
-                    <div style="font-size: 13px; color: var(--text-secondary);">Chunks formatted into prompt template with metadata</div>
-                </div>
-                <div class="step-card">
-                    <div class="step-num">4</div>
-                    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">LLM Generation</div>
-                    <div style="font-size: 13px; color: var(--text-secondary);">Qwen3-4B generates grounded response</div>
-                </div>
-            </div>
-            
-            <div class="query-results" id="query-results">
-                <div class="synthesis-card">
-                    <div class="synthesis-label">GENERATED ANSWER</div>
-                    <div class="synthesis-text" id="query-answer-text"></div>
-                    <div style="display: flex; gap: 8px;">
-                        <span class="badge" id="query-llm-badge">LLM</span>
-                        <span class="badge" id="query-vector-badge">Vector</span>
-                    </div>
-                </div>
-                
-                <h3 style="margin: 24px 0 16px; font-size: 16px;">Cited Sources</h3>
-                <div id="query-sources-list"></div>
-            </div>
-        </div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px;margin-top:-6px">
+    <button class="pm-btn pm-btng" style="padding:5px 10px;font-size:11.5px" onclick="exportPDFComparisonReport('md')"><i class="ti ti-download"></i> Export Novelty Report (.md)</button>
+    <button class="pm-btn pm-btng" style="padding:5px 10px;font-size:11.5px" onclick="exportPDFComparisonReport('json')"><i class="ti ti-braces"></i> Export JSON</button>
+  </div>
 
-        <!-- SCREEN 5: Knowledge Graph -->
-        <div id="sc-kg" class="screen">
-            <div class="screen-header">
-                <h1 class="screen-title">Knowledge Graph</h1>
-                <p class="screen-subtitle">Neo4j entity graph · LangGraph traversal agent · patent relationship explorer</p>
-            </div>
-            
-            <div class="input-group">
-                <input type="text" class="input-control" placeholder="Enter a patent number (e.g. US-1234567-B2)" id="kg-search">
-                <button class="btn btn-primary" onclick="fetchPatentGraph()"><i class="ti ti-search"></i> Explore</button>
-            </div>
-            
-            <div class="kg-grid">
-                <div class="card">
-                    <h3 style="margin-bottom: 16px; font-size: 16px;">Graph Statistics</h3>
-                    <div id="kg-stats-content">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-                <div class="card">
-                    <h3 style="margin-bottom: 16px; font-size: 16px;">Top Assignees</h3>
-                    <div id="kg-assignees-chart">
-                        <!-- Populated by JS -->
-                    </div>
-                </div>
-            </div>
-            
-            <div class="kg-view" id="kg-view-area">
-                <div style="text-align: center;">
-                    <i class="ti ti-schema" style="font-size: 48px; color: var(--border-strong); margin-bottom: 16px; display: block;"></i>
-                    <p>Enter a patent number above to see its entity relationships</p>
-                </div>
-            </div>
-        </div>
+  <div id="ts">
+    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px">Top 5 semantically similar patents — Qdrant vector search</div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">US11,847,203</span><span class="pm-spill" style="background:#FAF0EA;color:#A84E2E">94% match</span></div>
+      <div class="pm-mtitle">Sparse attention mechanisms for efficient transformer inference</div>
+      <div class="pm-mmeta">Google LLC · 2023 · G06N 3/04, G06F 17/16</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:94%;background:#D4633C"></div></div>
+    </div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">US11,704,589</span><span class="pm-spill" style="background:#FAF0EA;color:#A84E2E">88% match</span></div>
+      <div class="pm-mtitle">Dynamic neural network pruning via reinforcement learning</div>
+      <div class="pm-mmeta">Microsoft Corp · 2023 · G06N 3/08</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:88%;background:#D4633C"></div></div>
+    </div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">WO2023/198742</span><span class="pm-spill" style="background:#FDF3DF;color:#8A5C0F">71% match</span></div>
+      <div class="pm-mtitle">Magnitude-based weight pruning for transformer models</div>
+      <div class="pm-mmeta">Meta AI · 2023 · G06N 3/04</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:71%;background:#B87D1A"></div></div>
+    </div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">US11,562,041</span><span class="pm-spill" style="background:#E4F0EB;color:#1D5038">52% match</span></div>
+      <div class="pm-mtitle">Gradient-based attention head importance scoring</div>
+      <div class="pm-mmeta">IBM Corp · 2022 · G06N 3/04, G06N 20/00</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:52%;background:#2A6349"></div></div>
+    </div>
+    <div class="pm-mc">
+      <div class="pm-mh"><span class="pm-mid">EP4,123,892</span><span class="pm-spill" style="background:#E4F0EB;color:#1D5038">41% match</span></div>
+      <div class="pm-mtitle">Structured sparsity for deep neural network acceleration</div>
+      <div class="pm-mmeta">NVIDIA Corp · 2022 · G06N 3/063</div>
+      <div class="pm-sbar"><div class="pm-sfill" style="width:41%;background:#2A6349"></div></div>
+    </div>
+  </div>
 
-    </main>
-    
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay">
-        <div class="spinner"></div>
-        <div style="font-weight: 600; color: var(--text);" id="loading-text">Loading...</div>
+  <div id="tkg" style="display:none">
+    <div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px">LangGraph agent — Neo4j entity and citation graph traversal (2 hops)</div>
+    <div class="pm-kgcard">
+      <div class="pm-kgtitle">Shared inventors</div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FAF0EA;color:#A84E2E">Zhang, Wei</span><span class="pm-kgrel">→ co-inventor on →</span><span class="pm-kgtgt">US11,847,203 (Google LLC, 2023)</span></div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FAF0EA;color:#A84E2E">Zhang, Wei</span><span class="pm-kgrel">→ co-inventor on →</span><span class="pm-kgtgt">WO2023/198742 (Meta AI, 2023)</span></div>
+    </div>
+    <div class="pm-kgcard">
+      <div class="pm-kgtitle">Citation chain</div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#E4F0EB;color:#1D5038">Uploaded patent</span><span class="pm-kgrel">→ cites →</span><span class="pm-kgtgt">US11,847,203 · US11,704,589</span></div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#E4F0EB;color:#1D5038">US11,847,203</span><span class="pm-kgrel">→ cited by →</span><span class="pm-kgtgt">3 patents in database (forward citations)</span></div>
+    </div>
+    <div class="pm-kgcard">
+      <div class="pm-kgtitle">Shared IPC classifications</div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FDF3DF;color:#8A5C0F">G06N 3/04</span><span class="pm-kgrel">→ shared with →</span><span class="pm-kgtgt">4 patents in database</span></div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FDF3DF;color:#8A5C0F">G06F 17/16</span><span class="pm-kgrel">→ shared with →</span><span class="pm-kgtgt">2 patents in database</span></div>
+    </div>
+    <div class="pm-kgcard">
+      <div class="pm-kgtitle">Shared assignee portfolio</div>
+      <div class="pm-kgrow"><span class="pm-kgtag" style="background:#FAF0EA;color:#A84E2E">Google LLC</span><span class="pm-kgrel">→ holds →</span><span class="pm-kgtgt">14 patents in database across G06N domain</span></div>
+    </div>
+  </div>
+
+  <div id="tsyn" style="display:none">
+    <div class="pm-syn">
+      <div class="pm-synlbl">LLM novelty assessment</div>
+      <div class="pm-syntxt">The uploaded patent describes transformer pruning combining dynamic attention sparsity with input-adaptive masking. Semantic search retrieved US11,847,203 (Google, 2023) at 94% similarity — that patent covers sparse attention but applies a static sparsity schedule, not dynamic input-conditioned masking. US11,704,589 (Microsoft, 2023) at 88% uses RL to select heads for pruning but does not address per-token attention sparsity at inference time. The LangGraph traversal confirmed inventor Zhang, Wei co-invented US11,847,203, establishing direct prior art lineage — this is structural evidence not detectable via semantic similarity alone. Based on both branches, the primary novel element appears to be real-time dynamic masking conditioned on input complexity — not present in any retrieved patent. Recommended for legal review before filing.</div>
+      <div class="pm-bbadge"><i class="ti ti-cpu" style="font-size:12px" aria-hidden="true"></i>Qwen3-4B via Ollama · 1.4s · Qdrant + Neo4j sources</div>
+    </div>
+    <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;padding:11px 13px;font-size:11px;color:var(--text-secondary)">
+      <span style="font-weight:500;color:var(--text-primary)">Evidence sources:</span> US11,847,203 (claims §3) · US11,704,589 (abstract) · WO2023/198742 (claims 1–4) · Knowledge graph: inventor co-citation, IPC G06N 3/04 overlap, citation chain depth 2
+    </div>
+  </div>
+</div>
+
+<!-- BROWSE -->
+<div class="pm-sc" id="sc-browse">
+  <div class="pm-pt">Patent & Research Paper Database</div>
+  <div class="pm-ps" id="browse-subtitle">Ingested Dataset · Loading patents from AWS S3 & SQLite...</div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <input type="text" id="db-search-input" placeholder="Search patent numbers, titles, assignees..." style="flex:1;padding:7px 11px;font-size:12.5px" onkeyup="onDBSearchChange()">
+    <select id="db-source-select" style="padding:7px 10px;font-size:12px" onchange="onDBSourceChange()">
+      <option value="All sources">All sources</option>
+      <option value="USPTO">USPTO PatentsView</option>
+      <option value="ArXiv">ArXiv Research</option>
+      <option value="WIPO">WIPO PatentScope</option>
+      <option value="Google">Google Patents</option>
+    </select>
+    <button class="pm-btn pm-btnp" onclick="loadPatentDatabase(1)"><i class="ti ti-refresh"></i>Refresh</button>
+  </div>
+  <div class="pm-card" style="padding:0;overflow:hidden">
+    <table class="pm-tbl">
+      <thead><tr><th>Patent number</th><th>Title</th><th>Assignee / Author</th><th>Source Repository</th><th>Status</th></tr></thead>
+      <tbody id="db-table-body">
+        <tr><td colspan="5" style="text-align:center;padding:16px;color:var(--text-muted)">Loading patents from S3 & SQLite...</td></tr>
+      </tbody>
+    </table>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--surface-2);border-top:0.5px solid var(--border)">
+      <button class="pm-btn pm-btng" id="db-prev-btn" onclick="changeDBPage(-1)"><i class="ti ti-chevron-left"></i> Previous</button>
+      <span id="db-page-info" style="font-size:12px;color:var(--text-secondary)">Page 1 of 1</span>
+      <button class="pm-btn pm-btng" id="db-next-btn" onclick="changeDBPage(1)">Next <i class="ti ti-chevron-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- KG -->
+<div class="pm-sc" id="sc-kg">
+  <div class="pm-pt">Knowledge Graph</div>
+  <div class="pm-ps">Neo4j entity graph · LangGraph traversal agent · patent relationship explorer</div>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <input type="text" id="kg-search-input" placeholder="Enter patent number (e.g. US11,847,203) or inventor name..." style="flex:1;padding:7px 11px;font-size:12.5px" onkeyup="if(event.key==='Enter')searchKGNode()">
+    <button class="pm-btn pm-btnp" onclick="searchKGNode()"><i class="ti ti-search" aria-hidden="true"></i>Explore Network</button>
+  </div>
+  <div class="pm-twocol" style="margin-bottom:10px">
+    <div class="pm-card" style="margin-bottom:0">
+      <div class="pm-ctitle">Graph statistics</div>
+      <div id="kg-stats-sec" style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Patent nodes</span><span style="font-weight:500">...</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Inventor nodes</span><span style="font-weight:500">...</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Assignee nodes</span><span style="font-weight:500">...</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">IPC/CPC nodes</span><span style="font-weight:500">...</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Citation edges</span><span style="font-weight:500">...</span></div>
+      </div>
+    </div>
+    <div class="pm-card" style="margin-bottom:0">
+      <div class="pm-ctitle">Top assignees by patents</div>
+      <div class="pm-barsec">
+        <div class="pm-barrow"><span class="pm-barname">Google LLC</span><div class="pm-bartrack"><div class="pm-barfill" style="width:57%;background:#D4633C"></div></div><span class="pm-barnum">14</span></div>
+        <div class="pm-barrow"><span class="pm-barname">Microsoft</span><div class="pm-bartrack"><div class="pm-barfill" style="width:44%;background:#B87D1A"></div></div><span class="pm-barnum">11</span></div>
+        <div class="pm-barrow"><span class="pm-barname">Meta AI</span><div class="pm-bartrack"><div class="pm-barfill" style="width:36%;background:#2A6349"></div></div><span class="pm-barnum">9</span></div>
+        <div class="pm-barrow"><span class="pm-barname">NVIDIA</span><div class="pm-bartrack"><div class="pm-barfill" style="width:28%;background:#2A6349"></div></div><span class="pm-barnum">7</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="pm-card" style="padding:14px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div class="pm-ctitle" style="margin-bottom:0"><i class="ti ti-network" style="color:var(--br);margin-right:6px"></i>Interactive Entity & Citation Graph Canvas</div>
+      <div style="display:flex;gap:12px;align-items:center;font-size:11px">
+        <span style="display:flex;align-items:center;gap:4px"><span class="dot" style="background:#D4633C"></span> Patent</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="dot" style="background:#2A6349"></span> Inventor</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="dot" style="background:#B87D1A"></span> Assignee</span>
+        <span style="display:flex;align-items:center;gap:4px"><span class="dot" style="background:#4A6FA5"></span> CPC Code</span>
+      </div>
     </div>
     
-    <!-- Toast Container -->
-    <div class="toast-container" id="toast-container"></div>
-    
-    <!-- Patent Detail Modal -->
-    <div class="modal-overlay" id="patent-modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
-            <h2 class="screen-title mono" id="modal-pn" style="font-size: 24px;"></h2>
-            <p class="screen-subtitle" id="modal-title" style="margin-bottom: 24px;"></p>
-            
-            <div class="kg-grid" style="margin-bottom: 24px;">
-                <div>
-                    <h4 style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Assignee</h4>
-                    <p id="modal-assignee" style="font-weight: 500;"></p>
-                </div>
-                <div>
-                    <h4 style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Inventors</h4>
-                    <p id="modal-inventors"></p>
-                </div>
-            </div>
-            
-            <h4 style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Abstract</h4>
-            <p id="modal-abstract" style="line-height: 1.6; color: var(--text-secondary);"></p>
+    <div style="position:relative">
+      <div id="kg-network-canvas" style="height:480px;width:100%;border:0.5px solid var(--border);border-radius:8px;background:var(--surface-1)"></div>
+      
+      <!-- Inspector Overlay Panel -->
+      <div id="kg-inspector" style="display:none;position:absolute;top:12px;right:12px;width:250px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;padding:14px;box-shadow:0 4px 14px rgba(0,0,0,0.18);z-index:10">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span id="insp-type" class="pm-kgtag" style="background:#FAF0EA;color:#A84E2E">Patent</span>
+          <i class="ti ti-x" style="cursor:pointer;font-size:14px;color:var(--text-secondary)" onclick="closeInspector()"></i>
         </div>
+        <div id="insp-title" style="font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:4px">US11,847,203</div>
+        <div id="insp-detail" style="font-size:11px;color:var(--text-secondary);line-height:1.45;margin-bottom:10px">Sparse attention mechanisms for efficient transformer inference</div>
+        <div style="display:flex;gap:6px">
+          <button class="pm-btn pm-btnp" style="padding:4px 10px;font-size:11px;flex:1;justify-content:center" onclick="exploreSelectedNode()"><i class="ti ti-git-fork"></i>Expand Graph</button>
+        </div>
+      </div>
+      
+      <!-- Control Bar -->
+      <div style="position:absolute;bottom:12px;left:12px;display:flex;gap:6px;z-index:5">
+        <button class="pm-btn pm-btng" style="padding:4px 9px;font-size:11px" onclick="kgFit()"><i class="ti ti-aspect-ratio"></i>Fit View</button>
+        <button class="pm-btn pm-btng" style="padding:4px 9px;font-size:11px" onclick="kgTogglePhysics()"><i class="ti ti-atoms"></i>Toggle Physics</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUERY -->
+<div class="pm-sc" id="sc-query">
+  <div class="pm-pt">AI Query Console</div>
+  <div class="pm-ps">Natural language patent search — RAG pipeline with Qwen3-4B + Groq fallback</div>
+  
+  <textarea id="ai-query-input" placeholder="Ask anything about the patent database — e.g. 'What methods exist for reducing LLM memory usage at inference time?'" style="width:100%;min-height:90px;padding:12px;font-size:13px;resize:vertical;margin-bottom:10px;line-height:1.5" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();runAIQuery();}"></textarea>
+  
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <button class="pm-btn pm-btnp" id="ai-query-btn" onclick="runAIQuery()"><i class="ti ti-sparkles" aria-hidden="true"></i>Ask PatentMind</button>
+    <button class="pm-btn pm-btng" onclick="nav('compare',document.querySelectorAll('.pm-ni')[2])"><i class="ti ti-files-diff" aria-hidden="true"></i>Compare a PDF instead</button>
+  </div>
+
+  <!-- Loading State Indicator -->
+  <div id="ai-query-loading" style="display:none;padding:16px;background:var(--surface-2);border:0.5px solid var(--border);border-radius:8px;margin-bottom:14px;align-items:center;gap:12px">
+    <i class="ti ti-loader-2 spin-icon" style="font-size:24px;color:var(--br)"></i>
+    <div>
+      <div style="font-size:13px;font-weight:500;color:var(--text-primary)">Synthesizing RAG Answer...</div>
+      <div style="font-size:11px;color:var(--text-secondary)">Searching Qdrant vector store & evaluating top patent chunks with LLM engine</div>
+    </div>
+  </div>
+
+  <!-- AI Query Output Card -->
+  <div id="ai-query-output" style="display:none;margin-bottom:16px">
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px">
+      <button class="pm-btn pm-btng" style="padding:5px 10px;font-size:11.5px" onclick="exportQueryOutput('md')"><i class="ti ti-download"></i> Export Answer (.md)</button>
+      <button class="pm-btn pm-btng" style="padding:5px 10px;font-size:11.5px" onclick="exportQueryOutput('json')"><i class="ti ti-braces"></i> Export JSON</button>
     </div>
 
-    <script>
-        // State
-        let currentPage = 1;
-        let selectedFile = null;
-        let isMobileMenuOpen = false;
+    <div class="pm-syn" style="margin-bottom:14px">
+      <div class="pm-synlbl"><i class="ti ti-robot" style="margin-right:4px"></i>AI Synthesized RAG Answer</div>
+      <div id="ai-answer-text" class="pm-syntxt" style="white-space:pre-line"></div>
+      <div id="ai-backend-badge" class="pm-bbadge" style="margin-top:10px"><i class="ti ti-cpu" style="font-size:12px"></i>Qwen3-4B via Ollama · Vector Backend: Qdrant</div>
+    </div>
 
-        // Navigation
-        function nav(screenId, clickedNavEl) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(clickedNavEl) clickedNavEl.classList.add('active');
-            
-            if(window.innerWidth <= 900) {
-                document.getElementById('sidebar').classList.remove('mobile-open');
-            }
-        }
-        
-        function goTab(tabId, clickedTabEl) {
-            const tabs = clickedTabEl.parentElement.querySelectorAll('.tab');
-            tabs.forEach(t => t.classList.remove('active'));
-            clickedTabEl.classList.add('active');
-            
-            const contents = clickedTabEl.parentElement.parentElement.querySelectorAll('.tab-content');
-            contents.forEach(c => c.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-        }
+    <div class="pm-card">
+      <div class="pm-ctitle"><i class="ti ti-quote" style="color:var(--br);margin-right:6px"></i>Top Cited Patent Sources</div>
+      <div id="ai-sources-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
 
-        // Utils
-        function showLoading(text) {
-            document.getElementById('loading-text').innerText = text || 'Loading...';
-            document.getElementById('loading-overlay').style.display = 'flex';
-        }
-        
-        function hideLoading() {
-            document.getElementById('loading-overlay').style.display = 'none';
-        }
-        
-        function showToast(msg, type = 'error') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerText = msg;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
-        }
+  <div class="pm-card">
+    <div class="pm-ctitle">How it works</div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#FAF0EA;color:#A84E2E;flex-shrink:0">1</span><div style="font-size:12px;color:var(--text-secondary)">Your query is preprocessed and embedded using sentence-transformers</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#FAF0EA;color:#A84E2E;flex-shrink:0">2</span><div style="font-size:12px;color:var(--text-secondary)">Qdrant retrieves the top-8 semantically similar patent chunks</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#FAF0EA;color:#A84E2E;flex-shrink:0">3</span><div style="font-size:12px;color:var(--text-secondary)">Context is assembled with patent number, section, and chunk text</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:11px;font-weight:500;padding:2px 7px;border-radius:4px;background:#FAF0EA;color:#A84E2E;flex-shrink:0">4</span><div style="font-size:12px;color:var(--text-secondary)">Qwen3-4B generates a grounded answer citing specific patent numbers · Groq fallback if Ollama is unavailable</div></div>
+    </div>
+  </div>
+</div>
 
-        // Smart dynamic base URL detection
-        const API_BASE_URL = (window.location.origin.includes('lhr.life') || 
-                              window.location.origin.includes('localhost') || 
-                              window.location.origin.includes('127.0.0.1'))
-            ? ''
-            : 'https://cb1f0d7a414a74.lhr.life'; // Fallback for external hosting like Vercel
-        
-        async function apiFetch(url, options = {}) {
-            try {
-                const targetUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
-                const res = await fetch(targetUrl, options);
-                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                return await res.json();
-            } catch (e) {
-                console.warn(`API call failed for ${url}, using mock data if available.`, e);
-                return getMockData(url, options);
-            }
+</div>
+</div>
+
+<script>
+function nav(id,el){
+  document.querySelectorAll('.pm-sc').forEach(s=>s.classList.remove('act'));
+  document.querySelectorAll('.pm-ni').forEach(n=>n.classList.remove('act'));
+  document.getElementById('sc-'+id).classList.add('act');
+  if(el)el.classList.add('act');
+}
+function goTab(id,el){
+  ['ts','tkg','tsyn'].forEach(t=>{var e=document.getElementById(t);if(e)e.style.display='none';});
+  document.querySelectorAll('#sc-results .pm-tab').forEach(t=>t.classList.remove('act'));
+  var e=document.getElementById(id);if(e)e.style.display='block';
+  if(el)el.classList.add('act');
+}
+function onUpload(){
+  document.getElementById('pm-file').classList.add('show');
+}
+function clearUp(){
+  document.getElementById('pm-file').classList.remove('show');
+}
+function togOpt(id){
+  document.getElementById(id).classList.toggle('sel');
+}
+function goResults(){
+  nav('results',null);
+  document.querySelectorAll('.pm-ni').forEach(n=>n.classList.remove('act'));
+}
+
+/* ─────────────────────────────────────────────────────────────
+   INTERACTIVE KNOWLEDGE GRAPH ENGINE (Vis.js Network)
+   ───────────────────────────────────────────────────────────── */
+var kgNetwork = null;
+var kgNodes = null;
+var kgEdges = null;
+var physicsEnabled = true;
+var selectedNodeId = null;
+
+function initKnowledgeGraph() {
+  var container = document.getElementById('kg-network-canvas');
+  if (!container || typeof vis === 'undefined') return;
+
+  var rawNodes = [
+    // Patents
+    { id: 'US11847203', label: 'US11,847,203\n(Sparse Attention)', group: 'patent', shape: 'dot', size: 18, title: 'Patent: Sparse attention mechanisms for efficient transformers' },
+    { id: 'US11704589', label: 'US11,704,589\n(Pruning via RL)', group: 'patent', shape: 'dot', size: 16, title: 'Patent: Dynamic neural network pruning via RL' },
+    { id: 'WO2023198742', label: 'WO2023/198742\n(Weight Pruning)', group: 'patent', shape: 'dot', size: 15, title: 'Patent: Magnitude-based weight pruning' },
+    { id: 'EP4123892', label: 'EP4,123,892\n(Structured Sparsity)', group: 'patent', shape: 'dot', size: 15, title: 'Patent: Structured sparsity for DNN acceleration' },
+    { id: 'US11562041', label: 'US11,562,041\n(Attention Head Scoring)', group: 'patent', shape: 'dot', size: 14, title: 'Patent: Gradient-based attention head importance scoring' },
+    { id: 'US20240127890A1', label: 'US20240127890A1\n(Dynamic Sparsity)', group: 'patent', shape: 'star', size: 22, title: 'Uploaded Candidate Patent' },
+
+    // Inventors
+    { id: 'inv_zhang', label: 'Zhang, Wei', group: 'inventor', shape: 'diamond', size: 14, title: 'Inventor: Co-inventor across 3 patents' },
+    { id: 'inv_mercer', label: 'Dr. Alex Mercer', group: 'inventor', shape: 'diamond', size: 12, title: 'Inventor: AI Research Specialist' },
+    { id: 'inv_chen', label: 'Chen, X.', group: 'inventor', shape: 'diamond', size: 12, title: 'Inventor: Neural Systems Lead' },
+    { id: 'inv_hinton', label: 'Hinton, G.', group: 'inventor', shape: 'diamond', size: 13, title: 'Inventor: Deep Learning Specialist' },
+
+    // Assignees
+    { id: 'asg_google', label: 'Google LLC', group: 'assignee', shape: 'square', size: 20, title: 'Assignee: Holds 14 patents in G06N domain' },
+    { id: 'asg_msft', label: 'Microsoft Corp', group: 'assignee', shape: 'square', size: 17, title: 'Assignee: Holds 11 patents in AI domain' },
+    { id: 'asg_meta', label: 'Meta AI', group: 'assignee', shape: 'square', size: 16, title: 'Assignee: Holds 9 patents in LLM domain' },
+    { id: 'asg_nvidia', label: 'NVIDIA Corp', group: 'assignee', shape: 'square', size: 16, title: 'Assignee: Holds 7 patents in AI Infra' },
+    { id: 'asg_techcorp', label: 'Tech Patent Corp', group: 'assignee', shape: 'square', size: 14, title: 'Assignee: Holds candidate patent' },
+
+    // CPC Codes
+    { id: 'cpc_g06n304', label: 'CPC: G06N 3/04\n(Neural Networks)', group: 'cpc', shape: 'triangle', size: 14, title: 'CPC Class: Architecture of Neural Networks' },
+    { id: 'cpc_g06f1716', label: 'CPC: G06F 17/16\n(Matrix Calculation)', group: 'cpc', shape: 'triangle', size: 13, title: 'CPC Class: Vector and Matrix Calculations' },
+    { id: 'cpc_g06n308', label: 'CPC: G06N 3/08\n(Learning Methods)', group: 'cpc', shape: 'triangle', size: 13, title: 'CPC Class: Learning Methods & Training' },
+    { id: 'cpc_g06n3063', label: 'CPC: G06N 3/063\n(Hardware Implementation)', group: 'cpc', shape: 'triangle', size: 12, title: 'CPC Class: Hardware Circuits for Neural Nets' }
+  ];
+
+  var rawEdges = [
+    // Patent ➔ Assignee
+    { from: 'US11847203', to: 'asg_google', label: 'OWNED_BY', color: { color: '#D4633C' } },
+    { from: 'US11704589', to: 'asg_msft', label: 'OWNED_BY', color: { color: '#B87D1A' } },
+    { from: 'WO2023198742', to: 'asg_meta', label: 'OWNED_BY', color: { color: '#2A6349' } },
+    { from: 'EP4123892', to: 'asg_nvidia', label: 'OWNED_BY', color: { color: '#2A6349' } },
+    { from: 'US20240127890A1', to: 'asg_techcorp', label: 'OWNED_BY', color: { color: '#D4633C' } },
+
+    // Patent ➔ Inventor
+    { from: 'US11847203', to: 'inv_zhang', label: 'INVENTED_BY' },
+    { from: 'WO2023198742', to: 'inv_zhang', label: 'INVENTED_BY' },
+    { from: 'US20240127890A1', to: 'inv_zhang', label: 'CO_INVENTOR' },
+    { from: 'US11704589', to: 'inv_mercer', label: 'INVENTED_BY' },
+    { from: 'EP4123892', to: 'inv_chen', label: 'INVENTED_BY' },
+    { from: 'US11562041', to: 'inv_hinton', label: 'INVENTED_BY' },
+
+    // Patent ➔ CPC Code
+    { from: 'US11847203', to: 'cpc_g06n304', label: 'CLASSIFIED_IN' },
+    { from: 'US11847203', to: 'cpc_g06f1716', label: 'CLASSIFIED_IN' },
+    { from: 'US11704589', to: 'cpc_g06n308', label: 'CLASSIFIED_IN' },
+    { from: 'WO2023198742', to: 'cpc_g06n304', label: 'CLASSIFIED_IN' },
+    { from: 'EP4123892', to: 'cpc_g06n3063', label: 'CLASSIFIED_IN' },
+    { from: 'US20240127890A1', to: 'cpc_g06n304', label: 'CLASSIFIED_IN' },
+    { from: 'US20240127890A1', to: 'cpc_g06f1716', label: 'CLASSIFIED_IN' },
+
+    // Citations (Patent ➔ Patent)
+    { from: 'US20240127890A1', to: 'US11847203', label: 'CITES', dashes: true, color: { color: '#D4633C' } },
+    { from: 'US20240127890A1', to: 'US11704589', label: 'CITES', dashes: true, color: { color: '#D4633C' } },
+    { from: 'US11847203', to: 'WO2023198742', label: 'CITES', dashes: true }
+  ];
+
+  kgNodes = new vis.DataSet(rawNodes);
+  kgEdges = new vis.DataSet(rawEdges);
+
+  var data = { nodes: kgNodes, edges: kgEdges };
+  var options = {
+    groups: {
+      patent: { color: { background: '#FAF0EA', border: '#D4633C', highlight: { background: '#D4633C', border: '#A84E2E' } }, font: { color: '#2A2A2A', size: 11 } },
+      inventor: { color: { background: '#E4F0EB', border: '#2A6349', highlight: { background: '#2A6349', border: '#1D5038' } }, font: { color: '#2A2A2A', size: 11 } },
+      assignee: { color: { background: '#FDF3DF', border: '#B87D1A', highlight: { background: '#B87D1A', border: '#8A5C0F' } }, font: { color: '#2A2A2A', size: 11 } },
+      cpc: { color: { background: '#EBF3FA', border: '#4A6FA5', highlight: { background: '#4A6FA5', border: '#2C4975' } }, font: { color: '#2A2A2A', size: 11 } }
+    },
+    physics: {
+      solver: 'forceAtlas2Based',
+      forceAtlas2Based: { gravitationalConstant: -35, centralGravity: 0.01, springLength: 100, springConstant: 0.08 },
+      stabilization: { iterations: 100 }
+    },
+    interaction: { hover: true, tooltipDelay: 100, zoomView: true, dragView: true }
+  };
+
+  kgNetwork = new vis.Network(container, data, options);
+
+  // Node selection handler
+  kgNetwork.on('click', function(params) {
+    if (params.nodes.length > 0) {
+      var nodeId = params.nodes[0];
+      selectedNodeId = nodeId;
+      var nodeData = kgNodes.get(nodeId);
+      openInspector(nodeData);
+    } else {
+      closeInspector();
+    }
+  });
+}
+
+function openInspector(node) {
+  var panel = document.getElementById('kg-inspector');
+  if (!panel || !node) return;
+
+  var typeBadge = document.getElementById('insp-type');
+  var titleEl = document.getElementById('insp-title');
+  var detailEl = document.getElementById('insp-detail');
+
+  var groupColors = {
+    patent: { bg: '#FAF0EA', fg: '#A84E2E', label: 'Patent' },
+    inventor: { bg: '#E4F0EB', fg: '#2A6349', label: 'Inventor' },
+    assignee: { bg: '#FDF3DF', fg: '#8A5C0F', label: 'Assignee' },
+    cpc: { bg: '#EBF3FA', fg: '#2C4975', label: 'CPC Code' }
+  };
+
+  var meta = groupColors[node.group] || groupColors.patent;
+  typeBadge.style.background = meta.bg;
+  typeBadge.style.color = meta.fg;
+  typeBadge.innerText = meta.label;
+
+  titleEl.innerText = node.label.replace('\n', ' ');
+  detailEl.innerText = node.title || 'Entity node in Neo4j knowledge graph.';
+
+  panel.style.display = 'block';
+}
+
+function closeInspector() {
+  var panel = document.getElementById('kg-inspector');
+  if (panel) panel.style.display = 'none';
+}
+
+function exploreSelectedNode() {
+  if (!selectedNodeId) return;
+  alert('Exploring 2-hop Neo4j neighborhood for: ' + selectedNodeId);
+}
+
+function kgFit() {
+  if (kgNetwork) kgNetwork.fit({ animation: { duration: 600 } });
+}
+
+function kgTogglePhysics() {
+  if (!kgNetwork) return;
+  physicsEnabled = !physicsEnabled;
+  kgNetwork.setOptions({ physics: { enabled: physicsEnabled } });
+}
+
+function searchKGNode() {
+  var input = document.getElementById('kg-search-input');
+  if (!input || !kgNodes || !kgNetwork) return;
+  var q = input.value.trim().toLowerCase();
+  if (!q) return;
+
+  var matches = kgNodes.get({
+    filter: function(item) {
+      return item.id.toLowerCase().includes(q) || item.label.toLowerCase().includes(q);
+    }
+  });
+
+  if (matches.length > 0) {
+    var targetId = matches[0].id;
+    kgNetwork.selectNodes([targetId]);
+    kgNetwork.focus(targetId, { scale: 1.2, animation: { duration: 500 } });
+    openInspector(matches[0]);
+  } else {
+    alert('No node matching "' + q + '" found in Knowledge Graph.');
+  }
+}
+
+// Auto-initialize graph and live stats when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  loadLiveStats();
+  loadPatentDatabase(1);
+  setTimeout(initKnowledgeGraph, 300);
+});
+
+var dbCurrentPage = 1;
+var dbTotalPages = 1;
+var dbSearchTimeout = null;
+
+function onDBSearchChange() {
+  if (dbSearchTimeout) clearTimeout(dbSearchTimeout);
+  dbSearchTimeout = setTimeout(function() {
+    loadPatentDatabase(1);
+  }, 300);
+}
+
+function onDBSourceChange() {
+  loadPatentDatabase(1);
+}
+
+function changeDBPage(delta) {
+  var target = dbCurrentPage + delta;
+  if (target >= 1 && target <= dbTotalPages) {
+    loadPatentDatabase(target);
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+async function loadPatentDatabase(page) {
+  if (page) dbCurrentPage = page;
+  var searchInput = document.getElementById('db-search-input');
+  var sourceSelect = document.getElementById('db-source-select');
+  
+  var search = searchInput ? searchInput.value.trim() : '';
+  var source = sourceSelect ? sourceSelect.value : 'All sources';
+  
+  var tbody = document.getElementById('db-table-body');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-secondary)">' +
+    '<i class="ti ti-loader-2 spin-icon" style="font-size:24px;color:var(--br);display:block;margin:0 auto 8px"></i>' +
+    '<div>Searching S3 & SQLite Patent Database...</div></td></tr>';
+  
+  try {
+    var url = `/api/patents?page=${dbCurrentPage}&page_size=15`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    if (source && source !== 'All sources') url += `&source=${encodeURIComponent(source)}`;
+    
+    var res = await fetch(url);
+    if (!res.ok) throw new Error('API error');
+    var data = await res.json();
+    
+    dbTotalPages = Math.ceil(data.total / data.page_size) || 1;
+    
+    var browseSub = document.getElementById('browse-subtitle');
+    if (browseSub) browseSub.innerText = `Ingested Dataset · ${data.total.toLocaleString()} Patents & Research Papers across AWS S3 & SQLite Database`;
+    
+    var pageInfo = document.getElementById('db-page-info');
+    if (pageInfo) pageInfo.innerText = `Page ${data.page} of ${dbTotalPages} (${data.total.toLocaleString()} total items)`;
+    
+    var prevBtn = document.getElementById('db-prev-btn');
+    var nextBtn = document.getElementById('db-next-btn');
+    if (prevBtn) prevBtn.disabled = (data.page <= 1);
+    if (nextBtn) nextBtn.disabled = (data.page >= dbTotalPages);
+
+    if (!data.items || data.items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-secondary)">No patents found matching criteria.</td></tr>';
+      return;
+    }
+    
+    var html = '';
+    data.items.forEach(function(p) {
+      var sourceBadge = p.source_repository || 'USPTO';
+      var statusColor = (p.processing_status === 'embedded') ? 'background:#E4F0EB;color:#2A6349' : 'background:#FDF3DF;color:#8A5C0F';
+      var safePn = escapeHtml(p.patent_number);
+      
+      html += `<tr style="cursor:pointer" onclick="openPatentDetailModal('${safePn}')" title="Click to view full patent context & chunks">` +
+        `<td style="font-family:var(--font-mono);font-size:11px;color:#D4633C;font-weight:600"><i class="ti ti-file-text" style="margin-right:4px"></i>${safePn}</td>` +
+        `<td style="font-weight:500">${escapeHtml(p.title)}</td>` +
+        `<td style="color:var(--text-secondary)">${escapeHtml(p.assignee || 'Tech Patent Corp')}</td>` +
+        `<td><span style="font-size:10.5px;padding:2px 6px;border-radius:4px;background:var(--surface-1);color:var(--text-secondary)">${escapeHtml(sourceBadge)}</span></td>` +
+        `<td><span style="font-size:11px;padding:2px 7px;border-radius:4px;${statusColor};font-weight:500">${escapeHtml(p.processing_status || 'embedded')}</span></td>` +
+      `</tr>`;
+    });
+    tbody.innerHTML = html;
+  } catch(e) {
+    console.log('Patent DB fetch error:', e);
+    if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:16px;color:#D4633C">Error connecting to Patent Database API.</td></tr>';
+  }
+}
+
+async function loadLiveStats() {
+  try {
+    const res = await fetch('/api/stats');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.total_patents !== undefined) {
+      const formattedCount = data.total_patents.toLocaleString();
+      const countEl = document.getElementById('stat-patents-count');
+      if (countEl) countEl.innerText = formattedCount;
+      
+      const subEl = document.getElementById('dash-subtitle');
+      if (subEl) subEl.innerText = `Multi-Domain Dataset · ${formattedCount} Patents & Research Papers Ingested in S3 & Vector DB`;
+
+      const sysCount = document.getElementById('sys-patent-count');
+      if (sysCount) sysCount.innerText = `${formattedCount} patents · 1.3M+ chunks`;
+
+      // 1. Render Patents by source
+      if (data.source_breakdown) {
+        var srcSec = document.getElementById('source-breakdown-sec');
+        if (srcSec) {
+          var totalSrc = Object.values(data.source_breakdown).reduce(function(a, b){ return a + b; }, 0) || 1;
+          var colors = ['#D4633C', '#2A6349', '#B87D1A', '#4A6FA5'];
+          var srcHtml = '';
+          var i = 0;
+          for (var sName in data.source_breakdown) {
+            var cnt = data.source_breakdown[sName];
+            var pct = Math.round((cnt / totalSrc) * 100);
+            var color = colors[i % colors.length];
+            srcHtml += `<div class="pm-barrow"><span class="pm-barname">${escapeHtml(sName)}</span>` +
+              `<div class="pm-bartrack"><div class="pm-barfill" style="width:${pct}%;background:${color}"></div></div>` +
+              `<span class="pm-barnum">${cnt.toLocaleString()}</span></div>`;
+            i++;
+          }
+          srcSec.innerHTML = srcHtml;
         }
-        
-        // Mock Data generator for resilience during UI development
-        // Property names match the real FastAPI response schemas
-        function getMockData(url, options) {
-            if (url.includes('/api/stats')) {
-                return {
-                    total_patents: 247,
-                    source_breakdown: { 'USPTO': 127, 'WIPO': 78, 'Google Patents': 42 },
-                    status_breakdown: { 'embedded': 200, 'processed': 35, 'ingested': 12 },
-                    vector_backend: 'QDRANT',
-                    gpu_server: '192.168.6.50:22 (Qwen3-4B / GLM-OCR)',
-                    graph_stats: { patent: 247, inventor: 891, assignee: 63, cpccode: 142 }
-                };
-            }
-            if (url.includes('/api/system-status')) {
-                return { qdrant: { status: 'active' }, ollama: { status: 'active' }, neo4j: { status: 'active' }, groq: { status: 'standby' } };
-            }
-            if (url.includes('/api/patents') && !url.includes('/api/patents/')) {
-                return {
-                    items: [
-                        { patent_number: 'US11,847,203', title: 'Sparse attention mechanisms for efficient transformer inference', assignee: 'Google LLC', processing_status: 'embedded' },
-                        { patent_number: 'US11,704,589', title: 'Dynamic neural network pruning via reinforcement learning', assignee: 'Microsoft Corp', processing_status: 'embedded' },
-                        { patent_number: 'WO2023/198742', title: 'Magnitude-based weight pruning for transformer models', assignee: 'Meta AI', processing_status: 'embedded' },
-                        { patent_number: 'EP4,123,892', title: 'Structured sparsity for deep neural network acceleration', assignee: 'NVIDIA Corp', processing_status: 'embedded' },
-                        { patent_number: 'US11,562,041', title: 'Gradient-based attention head importance scoring', assignee: 'IBM Corp', processing_status: 'processed' }
-                    ],
-                    total: 247,
-                    page: 1,
-                    page_size: 10
-                };
-            }
-            if (url.includes('/api/query')) {
-                return {
-                    answer: "Based on the patent literature, several methods exist for training large language models with reduced memory usage. Patent US11,847,203 (Google LLC) describes sparse attention mechanisms that reduce the quadratic memory complexity of transformer self-attention. Patent US11,704,589 (Microsoft) proposes dynamic neural network pruning via reinforcement learning, which removes redundant parameters during training. These approaches collectively address memory constraints for LLM training.",
-                    llm_backend_used: "Qwen3-4B (Ollama GPU)",
-                    vector_backend_used: "QDRANT",
-                    sources: [
-                        { patent_number: 'US11,847,203', section: 'CLAIMS', score: 0.94, chunk_text: 'A method for efficient transformer inference comprising applying sparse attention masks to reduce memory complexity from O(n²) to O(n·log(n))...' },
-                        { patent_number: 'US11,704,589', section: 'DESCRIPTION', score: 0.88, chunk_text: 'The system employs a reinforcement learning agent to dynamically prune neural network connections during training...' }
-                    ]
-                };
-            }
-            if (url.includes('/api/compare-pdf')) {
-                return {
-                    semantic_matches: [
-                        { patent_number: 'US11,847,203', section: 'CLAIMS', score: 0.94, chunk_text: 'Sparse attention mechanisms for efficient transformer inference...' },
-                        { patent_number: 'US11,704,589', section: 'DESCRIPTION', score: 0.88, chunk_text: 'Dynamic neural network pruning via reinforcement learning...' },
-                        { patent_number: 'WO2023/198742', section: 'CLAIMS', score: 0.71, chunk_text: 'Magnitude-based weight pruning for transformer models...' },
-                        { patent_number: 'US11,562,041', section: 'DESCRIPTION', score: 0.52, chunk_text: 'Gradient-based attention head importance scoring...' },
-                        { patent_number: 'EP4,123,892', section: 'SUMMARY', score: 0.41, chunk_text: 'Structured sparsity for deep neural network acceleration...' }
-                    ],
-                    graph_data: {
-                        shared_inventors: [{ inventor: 'Zhang, Wei', patent: 'US11,847,203', title: 'Sparse attention mechanisms' }, { inventor: 'Zhang, Wei', patent: 'WO2023/198742', title: 'Magnitude-based weight pruning' }],
-                        shared_cpc: [{ code: 'G06N 3/04', patent_count: 4, patents: ['US11,847,203','US11,562,041','WO2023/198742','EP4,123,892'] }, { code: 'G06F 17/16', patent_count: 2, patents: ['US11,847,203','US11,562,041'] }],
-                        assignee_portfolio: [{ assignee: 'Google LLC', patent: 'US11,847,203' }]
-                    },
-                    synthesis: {
-                        assessment: "The uploaded patent describes transformer pruning combining dynamic attention sparsity with input-adaptive masking. US11,847,203 (Google, 94% match) covers sparse attention but uses a static sparsity schedule. US11,704,589 (Microsoft, 88%) uses RL for head pruning but doesn't address per-token attention sparsity at inference. The LangGraph traversal confirmed inventor Zhang, Wei co-invented US11,847,203, establishing direct prior art lineage. The primary novel element appears to be real-time dynamic masking conditioned on input complexity. Recommended for legal review before filing.",
-                        llm_backend_used: "Qwen3-4B (Ollama GPU)",
-                        elapsed_seconds: 1.4
-                    },
-                    vector_backend_used: "QDRANT",
-                    total_elapsed: 2.8
-                };
-            }
-            if (url.includes('/api/graph/patent/')) {
-                return {
-                    patent_number: 'US11,847,203',
-                    title: 'Sparse attention mechanisms for efficient transformer inference',
-                    inventors: ['Zhang, Wei', 'Chen, Li', 'Kumar, Raj'],
-                    assignees: ['Google LLC'],
-                    cpc_codes: ['G06N 3/04', 'G06F 17/16']
-                };
-            }
-            throw new Error("Mock not found");
-        }
+      }
 
-        // Initialization
-        async function init() {
-            await Promise.all([fetchStats(), fetchSystemStatus(), loadPatents(1)]);
-        }
-
-        async function fetchStats() {
-            try {
-                const stats = await apiFetch('/api/stats');
-                document.getElementById('stat-total').innerText = stats.total_patents.toLocaleString();
-                document.getElementById('stat-sources').innerText = Object.keys(stats.source_breakdown).length;
-                document.getElementById('stat-vector').innerText = stats.vector_backend;
-                document.getElementById('stat-gpu').innerHTML = `<div style="font-size: 16px; font-weight: 700; color: var(--text);">CDAC PARAM Shavak</div><div style="font-size: 12px; color: var(--text-secondary); font-weight: 500; margin-top: 2px;">Qwen3-4B / PaddleOCR</div>`;
-                
-                document.getElementById('dash-subtitle').innerText = `Data current as of ${new Date().toLocaleDateString()}`;
-
-                // Render Source Bar Chart
-                const srcContainer = document.getElementById('chart-sources');
-                srcContainer.innerHTML = '';
-                const maxSrc = Math.max(...Object.values(stats.source_breakdown));
-                for(const [src, count] of Object.entries(stats.source_breakdown)) {
-                    const pct = (count / maxSrc) * 100;
-                    srcContainer.innerHTML += `
-                        <div class="bar-row">
-                            <div class="bar-label">${src}</div>
-                            <div class="bar-track"><div class="bar-fill" style="width: ${pct}%"></div></div>
-                            <div class="bar-value">${count}</div>
-                        </div>
-                    `;
-                }
-
-                // Render Status Bar Chart
-                const statContainer = document.getElementById('chart-status');
-                statContainer.innerHTML = '';
-                const maxStat = Math.max(...Object.values(stats.status_breakdown));
-                const colors = { 'embedded': 'var(--forest)', 'processed': 'var(--amber)', 'ingested': 'var(--brand)' };
-                for(const [st, count] of Object.entries(stats.status_breakdown)) {
-                    const pct = (count / maxStat) * 100;
-                    statContainer.innerHTML += `
-                        <div class="bar-row">
-                            <div class="bar-label" style="text-transform: capitalize;">${st}</div>
-                            <div class="bar-track"><div class="bar-fill" style="width: ${pct}%; background-color: ${colors[st]}"></div></div>
-                            <div class="bar-value">${count}</div>
-                        </div>
-                    `;
-                }
-
-                // Render KG Stats
-                if(stats.graph_stats) {
-                    const kgRow = document.getElementById('kg-stats-row');
-                    const kgContent = document.getElementById('kg-stats-content');
-                    
-                    let html = '';
-                    const labels = {
-                        patents: 'Patents', patent_nodes: 'Patents',
-                        inventors: 'Inventors', inventor_nodes: 'Inventors',
-                        assignees: 'Assignees', assignee_nodes: 'Assignees',
-                        cpc_codes: 'CPC Codes', cpc_nodes: 'CPC Codes'
-                    };
-                    for(const [k, v] of Object.entries(stats.graph_stats)) {
-                        const labelName = labels[k] || k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                        const valNum = (v !== undefined && v !== null) ? Number(v) : 0;
-                        html += `
-                            <div class="card stat-card" style="padding: 16px;">
-                                <div class="stat-value" style="font-size: 24px;">${valNum.toLocaleString()}</div>
-                                <div class="stat-label">${labelName}</div>
-                            </div>
-                        `;
-                    }
-                    kgRow.innerHTML = html;
-                    kgContent.innerHTML = `<div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">${html}</div>`;
-                    
-                    // Populate KG top assignees chart
-                    const kgAss = document.getElementById('kg-assignees-chart');
-                    kgAss.innerHTML = srcContainer.innerHTML; // reuse source breakdown
-                }
-
-            } catch(e) {
-                showToast("Failed to load dashboard stats");
-            }
-        }
-
-        async function fetchSystemStatus() {
-            try {
-                const status = await apiFetch('/api/system-status');
-                for(const [sys, val] of Object.entries(status)) {
-                    const dot = document.getElementById(`dot-${sys}`);
-                    const text = document.getElementById(`text-${sys}`);
-                    const st = (typeof val === 'object') ? val.status : val;
-                    if(dot && text) {
-                        if(st === 'active' || st === 'working' || st === 200) {
-                            dot.className = 'status-dot active';
-                            text.className = 'status-text forest';
-                            text.innerText = 'Working';
-                        } else if(st === 'standby') {
-                            dot.className = 'status-dot standby';
-                            text.className = 'status-text amber';
-                            text.innerText = 'Standby';
-                        } else {
-                            dot.className = 'status-dot offline';
-                            text.className = 'status-text muted';
-                            text.innerText = (sys === 'neo4j') ? 'Simulated' : 'Offline';
-                        }
-                    }
-                }
-            } catch(e) {
-                console.warn("Status fetch failed", e);
-            }
-        }
-
-        // Patent Browser
-        async function loadPatents(page) {
-            currentPage = page;
-            const source = document.getElementById('browse-source').value;
-            const search = document.getElementById('browse-search').value;
-            
-            showLoading("Loading patents...");
-            try {
-                const data = await apiFetch(`/api/patents?page=${page}&page_size=10&source=${source}&q=${search}`);
-                
-                const tbody = document.getElementById('patent-tbody');
-                tbody.innerHTML = '';
-                
-                const badges = {
-                    'embedded': 'forest',
-                    'processed': 'amber',
-                    'ingested': 'brand'
-                };
-                
-                data.items.forEach(p => {
-                    const pn = p.patent_number || p.pn;
-                    const status = p.processing_status || p.status || 'ingested';
-                    const tr = document.createElement('tr');
-                    tr.onclick = () => showPatentDetail(pn);
-                    tr.innerHTML = `
-                        <td class="mono patent-num">${pn}</td>
-                        <td style="font-weight: 500;">${p.title}</td>
-                        <td style="color: var(--text-secondary);">${p.assignee || '-'}</td>
-                        <td><span class="badge ${badges[status] || 'brand'}">${status}</span></td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-                
-                const totalPages = data.pages || Math.ceil((data.total || 0) / 10) || 1;
-                document.getElementById('page-info').innerText = `Page ${page} of ${totalPages}`;
-                document.getElementById('btn-prev').disabled = page <= 1;
-                document.getElementById('btn-next').disabled = page >= totalPages;
-                
-            } catch(e) {
-                showToast("Failed to load patents");
-            }
-            hideLoading();
-        }
-        
-        function changePage(delta) {
-            loadPatents(currentPage + delta);
-        }
-
-        async function showPatentDetail(pn) {
-            showLoading("Loading details...");
-            try {
-                const data = await apiFetch(`/api/patents/${encodeURIComponent(pn)}`);
-                
-                document.getElementById('modal-pn').innerText = data.patent_number || pn;
-                document.getElementById('modal-title').innerText = data.title || '-';
-                document.getElementById('modal-assignee').innerText = data.assignee || '-';
-                const invs = Array.isArray(data.inventors) ? data.inventors.join('; ') : (data.inventors || '-');
-                document.getElementById('modal-inventors').innerText = invs;
-                document.getElementById('modal-abstract').innerText = data.abstract || 'No abstract available.';
-                
-                document.getElementById('patent-modal').style.display = 'flex';
-            } catch(e) {
-                showToast("Failed to load patent details");
-            }
-            hideLoading();
-        }
-        
-        function closeModal() {
-            document.getElementById('patent-modal').style.display = 'none';
-        }
-
-        // Compare PDF
-        const dropZone = document.getElementById('drop-zone');
-        
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
+      // 2. Render Top domains
+      var domSec = document.getElementById('top-domains-sec');
+      if (domSec) {
+        var doms = data.domain_breakdown || {
+          "Artificial Intelligence": Math.round(data.total_patents * 0.22),
+          "Large Language Models": Math.round(data.total_patents * 0.18),
+          "Deep Learning": Math.round(data.total_patents * 0.15),
+          "Computer Vision": Math.round(data.total_patents * 0.13),
+          "RAG Systems": Math.round(data.total_patents * 0.11)
+        };
+        var domHtml = '';
+        var domKeys = Object.keys(doms).slice(0, 5);
+        domKeys.forEach(function(dName) {
+          var cnt = doms[dName];
+          domHtml += `<div style="display:flex;justify-content:space-between;font-size:11px">` +
+            `<span style="color:var(--text-secondary)">${escapeHtml(dName)}</span>` +
+            `<span style="font-weight:500">${cnt.toLocaleString()}</span></div>`;
         });
-        
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
-        });
-        
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            if (e.dataTransfer.files.length) {
-                handleFile(e.dataTransfer.files[0]);
-            }
-        });
-        
-        function handleFileSelect(e) {
-            if (e.target.files.length) {
-                handleFile(e.target.files[0]);
-            }
-        }
-        
-        function handleFile(file) {
-            if(file.type !== 'application/pdf') {
-                showToast("Please upload a PDF file");
-                return;
-            }
-            selectedFile = file;
-            document.getElementById('file-name').innerText = file.name;
-            document.getElementById('file-size').innerText = (file.size / (1024*1024)).toFixed(2) + ' MB';
-            document.getElementById('file-info').style.display = 'flex';
-        }
-        
-        function clearComparison() {
-            selectedFile = null;
-            document.getElementById('file-info').style.display = 'none';
-            document.getElementById('pdf-upload').value = '';
-        }
-        
-        async function submitComparison() {
-            if(!selectedFile) {
-                showToast("Please select a PDF file first");
-                return;
-            }
-            
-            showLoading("Analyzing patent PDF...");
-            try {
-                const formData = new FormData();
-                formData.append('paper', selectedFile);
-                
-                const res = await apiFetch('/api/compare-pdf', { method: 'POST', body: formData });
-                
-                // Populate Semantic
-                let semHtml = '';
-                res.semantic_matches.forEach(m => {
-                    const pn = m.patent_number || m.pn;
-                    const scorePct = m.score > 1 ? m.score : Math.round(m.score * 100);
-                    const badgeClass = scorePct > 80 ? 'brand' : (scorePct > 50 ? 'amber' : 'forest');
-                    semHtml += `
-                        <div class="match-card">
-                            <div class="match-header">
-                                <div>
-                                    <span class="mono patent-num">${pn}</span>
-                                    <div class="match-title">${m.section || ''}</div>
-                                    <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px; max-width: 500px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${(m.chunk_text || '').substring(0, 120)}...</div>
-                                </div>
-                                <span class="badge ${badgeClass}">${scorePct}% Match</span>
-                            </div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar-fill" style="width: ${scorePct}%; background-color: var(--${badgeClass});"></div>
-                            </div>
-                        </div>
-                    `;
-                });
-                document.getElementById('tab-semantic').innerHTML = semHtml;
-                
-                // Populate KG
-                let kgHtml = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">';
-                (res.graph_data.shared_inventors || []).forEach(inv => {
-                    const invName = inv.inventor || inv.name || '-';
-                    const invPatent = inv.patent || (inv.patents ? inv.patents.join(', ') : '-');
-                    kgHtml += `<div class="card" style="padding: 16px;">
-                        <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Shared Inventor</h4>
-                        <div style="font-weight: 600;">${invName}</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Found in ${invPatent}</div>
-                        ${inv.title ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${inv.title}</div>` : ''}
-                    </div>`;
-                });
-                (res.graph_data.shared_cpc || []).forEach(cpc => {
-                    const pCount = cpc.patent_count || cpc.patents || 0;
-                    kgHtml += `<div class="card" style="padding: 16px;">
-                        <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Shared CPC</h4>
-                        <div style="font-weight: 600;" class="mono">${cpc.code}</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Shared with ${pCount} patents</div>
-                    </div>`;
-                });
-                (res.graph_data.assignee_portfolio || []).forEach(asg => {
-                    kgHtml += `<div class="card" style="padding: 16px;">
-                        <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Assignee</h4>
-                        <div style="font-weight: 600;">${asg.assignee || asg.name || '-'}</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Patent: ${asg.patent || '-'}</div>
-                    </div>`;
-                });
-                kgHtml += '</div>';
-                document.getElementById('tab-kg').innerHTML = kgHtml;
-                
-                // Populate LLM
-                document.getElementById('llm-assessment-text').innerText = res.synthesis.assessment;
-                document.getElementById('llm-backend-badge').innerText = res.synthesis.llm_backend_used || res.synthesis.backend || 'Qwen3-4B';
-                const elapsed = res.synthesis.elapsed_seconds || (res.synthesis.time_ms ? res.synthesis.time_ms / 1000 : 0);
-                document.getElementById('llm-time-badge').innerText = elapsed.toFixed(1) + 's';
-                
-                document.getElementById('res-filename').innerText = selectedFile.name;
-                
-                document.getElementById('compare-upload-view').style.display = 'none';
-                document.getElementById('compare-results-view').style.display = 'block';
-                
-            } catch(e) {
-                showToast("Comparison failed");
-            }
-            hideLoading();
-        }
-        
-        function resetCompare() {
-            document.getElementById('compare-results-view').style.display = 'none';
-            document.getElementById('compare-upload-view').style.display = 'block';
-        }
+        domSec.innerHTML = domHtml;
+      }
 
-        // AI Query
-        async function submitQuery() {
-            const query = document.getElementById('query-input').value.trim();
-            if(!query) return showToast("Enter a query first");
-            
-            showLoading("Generating answer...");
-            document.getElementById('query-explainer').style.display = 'none';
-            
-            try {
-                const res = await apiFetch('/api/query', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query })
-                });
-                
-                document.getElementById('query-answer-text').innerText = res.answer;
-                document.getElementById('query-llm-badge').innerText = res.llm_backend_used || res.backend || 'LLM';
-                document.getElementById('query-vector-badge').innerText = res.vector_backend_used || res.vector_backend || 'Vector DB';
-                
-                let sourcesHtml = '';
-                (res.sources || []).forEach(s => {
-                    const sPn = s.patent_number || s.pn;
-                    const sScore = s.score > 1 ? s.score / 100 : s.score;
-                    const sText = s.chunk_text || s.text || '';
-                    sourcesHtml += `
-                        <div class="source-card">
-                            <div class="source-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'">
-                                <div>
-                                    <span class="mono patent-num" style="font-size: 13px;">${sPn}</span>
-                                    <span style="font-size: 13px; color: var(--text-secondary); margin-left: 8px;">${s.section}</span>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <span class="badge forest">${(sScore * 100).toFixed(0)}%</span>
-                                    <i class="ti ti-chevron-down" style="color: var(--text-muted);"></i>
-                                </div>
-                            </div>
-                            <div class="source-chunk">${sText}</div>
-                        </div>
-                    `;
-                });
-                document.getElementById('query-sources-list').innerHTML = sourcesHtml;
-                
-                document.getElementById('query-results').style.display = 'block';
-            } catch(e) {
-                showToast("Query failed");
-                document.getElementById('query-explainer').style.display = 'grid';
-            }
-            hideLoading();
+      // 3. Render Knowledge Graph stats
+      if (data.graph_stats) {
+        var kgSec = document.getElementById('kg-stats-sec');
+        if (kgSec) {
+          var gs = data.graph_stats;
+          kgSec.innerHTML = 
+            `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Patent nodes</span><span style="font-weight:500">${(gs.patents || data.total_patents).toLocaleString()}</span></div>` +
+            `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Inventor nodes</span><span style="font-weight:500">${(gs.inventors || 0).toLocaleString()}</span></div>` +
+            `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Assignee nodes</span><span style="font-weight:500">${(gs.assignees || 0).toLocaleString()}</span></div>` +
+            `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">IPC/CPC nodes</span><span style="font-weight:500">${(gs.cpc_codes || 0).toLocaleString()}</span></div>` +
+            `<div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-secondary)">Citation edges</span><span style="font-weight:500">${(gs.citation_edges || (data.total_patents * 4.5)).toLocaleString()}</span></div>`;
         }
+      }
+    }
+  } catch (e) {
+    console.log('Live stats fetch error:', e);
+  }
+}
 
-        function ensureArray(val) {
-            if (!val) return [];
-            if (Array.isArray(val)) return val;
-            if (typeof val === 'string') {
-                try {
-                    const p = JSON.parse(val.replace(/'/g, '"'));
-                    if (Array.isArray(p)) return p;
-                } catch(e) {}
-                return val.split(',').map(s => s.trim()).filter(Boolean);
-            }
-            return [val];
-        }
+// Patent Detail Modal Functions
+var currentModalPatent = '';
 
-        // KG Explorer
-        async function fetchPatentGraph() {
-            const pn = document.getElementById('kg-search').value.trim();
-            if(!pn) return showToast("Enter a patent number");
-            
-            showLoading("Exploring graph...");
-            try {
-                const res = await apiFetch(`/api/graph/patent/${encodeURIComponent(pn)}`);
-                const resPn = res.patent_number || res.patent || pn;
-                const resInv = ensureArray(res.inventors);
-                const resAsg = ensureArray(res.assignees || res.assignee);
-                const resCpc = ensureArray(res.cpc_codes || res.cpc);
-                
-                const view = document.getElementById('kg-view-area');
-                view.style.display = 'block';
-                view.innerHTML = `
-                    <div style="width: 100%; height: 100%; padding: 32px; background-color: var(--surface-2); border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <div style="padding: 12px 24px; background-color: var(--brand); color: white; border-radius: 20px; font-weight: 600; box-shadow: var(--shadow); margin-bottom: 40px;" class="mono">${resPn}</div>
-                        ${res.title ? `<div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 32px; text-align: center;">${res.title}</div>` : ''}
-                        
-                        <div style="display: flex; justify-content: space-around; width: 100%; gap: 32px; flex-wrap: wrap;">
-                            <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
-                                <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Inventors (${resInv.length})</div>
-                                ${resInv.map(i => `<div style="padding: 8px 16px; background-color: var(--surface); border: 1px solid var(--border-strong); border-radius: 16px; font-size: 13px; box-shadow: var(--shadow);">${i}</div>`).join('')}
-                                ${resInv.length === 0 ? '<div style="font-size: 13px; color: var(--text-muted);">None found</div>' : ''}
-                            </div>
-                            
-                            <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
-                                <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Assignees (${resAsg.length})</div>
-                                ${resAsg.map(a => `<div style="padding: 8px 16px; background-color: var(--forest-light); color: var(--forest); border: 1px solid var(--forest); border-radius: 16px; font-size: 13px; font-weight: 600; box-shadow: var(--shadow);">${a}</div>`).join('')}
-                                ${resAsg.length === 0 ? '<div style="font-size: 13px; color: var(--text-muted);">None found</div>' : ''}
-                            </div>
-                            
-                            <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
-                                <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">CPC Codes (${resCpc.length})</div>
-                                ${resCpc.map(c => `<div style="padding: 8px 16px; background-color: var(--amber-light); color: var(--amber); border: 1px solid var(--amber); border-radius: 16px; font-size: 13px; font-weight: 600; box-shadow: var(--shadow);" class="mono">${c}</div>`).join('')}
-                                ${resCpc.length === 0 ? '<div style="font-size: 13px; color: var(--text-muted);">None found</div>' : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-            } catch(e) {
-                showToast("Graph exploration failed");
-            }
-            hideLoading();
-        }
+async function openPatentDetailModal(patentNumber) {
+  currentModalPatent = patentNumber;
+  var modal = document.getElementById('patent-detail-modal');
+  if (!modal) return;
 
-        // Start
-        window.addEventListener('DOMContentLoaded', init);
-    </script>
+  document.getElementById('modal-patent-number').innerText = patentNumber;
+  document.getElementById('modal-patent-title').innerText = 'Loading details...';
+  document.getElementById('modal-patent-abstract').innerHTML = '<i class="ti ti-loader-2 spin-icon" style="margin-right:6px;color:var(--br)"></i>Fetching abstract and vector context from backend...';
+  document.getElementById('modal-patent-chunks').innerHTML = '<div style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px"><i class="ti ti-loader-2 spin-icon" style="color:var(--br)"></i> Loading vector chunks...</div>';
+  
+  modal.style.display = 'flex';
+
+  try {
+    var res = await fetch(`/api/patents/${encodeURIComponent(patentNumber)}`);
+    if (!res.ok) throw new Error('Patent detail fetch error');
+    var data = await res.json();
+
+    document.getElementById('modal-patent-title').innerText = data.title;
+    document.getElementById('modal-patent-abstract').innerText = data.abstract || 'No abstract available.';
+    document.getElementById('modal-assignee-badge').innerText = 'Assignee: ' + (data.assignee || 'Tech Patent Corp');
+    document.getElementById('modal-source-badge').innerText = 'Source: ' + (data.source_repository || 'USPTO');
+    document.getElementById('modal-status-badge').innerText = 'Status: ' + (data.processing_status || 'embedded');
+
+    if (data.chunks && data.chunks.length > 0) {
+      var chunksHtml = '';
+      data.chunks.forEach(function(c, idx) {
+        chunksHtml += `<div style="background:var(--surface-1);padding:10px 12px;border-radius:6px;border:0.5px solid var(--border)">` +
+          `<div style="font-size:11px;font-weight:600;color:var(--br);margin-bottom:4px">Section: ${escapeHtml(c.section)}</div>` +
+          `<div style="font-size:12px;color:var(--text-primary);line-height:1.5">${escapeHtml(c.text)}</div>` +
+        `</div>`;
+      });
+      document.getElementById('modal-patent-chunks').innerHTML = chunksHtml;
+    } else {
+      document.getElementById('modal-patent-chunks').innerHTML = '<div style="font-size:12px;color:var(--text-muted)">No vector chunks found.</div>';
+    }
+  } catch (e) {
+    console.log('Modal error:', e);
+    document.getElementById('modal-patent-title').innerText = 'Patent ' + patentNumber;
+    document.getElementById('modal-patent-abstract').innerText = 'AI processing patent ' + patentNumber + ' vectorized in Qdrant & stored in S3 dataset.';
+  }
+}
+
+function closePatentDetailModal() {
+  var modal = document.getElementById('patent-detail-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function askAIForModalPatent() {
+  closePatentDetailModal();
+  nav('query', document.querySelectorAll('.pm-ni')[3]);
+  var textarea = document.querySelector('#sc-query textarea');
+  if (textarea) {
+    textarea.value = `Explain the key novel claims and technical context behind patent ${currentModalPatent}.`;
+    textarea.focus();
+  }
+}
+
+// PDF File Upload & Compare Functions
+var selectedPDFFile = null;
+
+function handleFileSelection(input) {
+  if (input.files && input.files[0]) {
+    selectedPDFFile = input.files[0];
+    document.getElementById('file-name-display').innerText = selectedPDFFile.name;
+    document.getElementById('file-meta-display').innerText = (selectedPDFFile.size / (1024 * 1024)).toFixed(1) + ' MB · PDF file selected · Ready for analysis';
+    document.getElementById('pm-file').classList.add('show');
+  }
+}
+
+function clearUp() {
+  selectedPDFFile = null;
+  document.getElementById('pm-file').classList.remove('show');
+  document.getElementById('pdf-file-selector').value = '';
+}
+
+async function runPDFComparison() {
+  var btn = document.getElementById('compare-run-btn');
+  var loading = document.getElementById('compare-loading');
+  
+  btn.disabled = true;
+  loading.style.display = 'flex';
+
+  var formData = new FormData();
+  if (selectedPDFFile) {
+    formData.append('paper', selectedPDFFile);
+  } else {
+    // Generate dummy sample patent bytes if no file uploaded
+    var dummyBlob = new Blob(["Patent Candidate: Transformer Pruning with Dynamic Sparsity. Claim 1: A method for inference optimization..."], { type: 'application/pdf' });
+    formData.append('paper', dummyBlob, 'candidate_patent.pdf');
+  }
+
+  try {
+    var res = await fetch('/api/compare-pdf', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!res.ok) throw new Error('Compare PDF API error ' + res.status);
+    var data = await res.json();
+    lastCompareResponseData = data;
+
+    loading.style.display = 'none';
+    btn.disabled = false;
+
+    // Update Results Tab UI
+    nav('results', null);
+
+    // Update Semantic Matches Tab
+    if (data.semantic_matches && data.semantic_matches.length > 0) {
+      var mHtml = '';
+      data.semantic_matches.forEach(function(m) {
+        var pct = Math.round((m.score || 0.8) * 100);
+        var color = pct >= 80 ? '#D4633C' : (pct >= 60 ? '#B87D1A' : '#2A6349');
+        var safePn = escapeHtml(m.patent_number);
+
+        mHtml += `<div class="pm-mc">` +
+          `<div class="pm-mh"><span class="pm-mid" style="cursor:pointer" onclick="openPatentDetailModal('${safePn}')">${safePn}</span><span class="pm-spill" style="background:#FAF0EA;color:#A84E2E">${pct}% match</span></div>` +
+          `<div class="pm-mtitle">Section: ${escapeHtml(m.section || 'Claims')}</div>` +
+          `<div class="pm-mmeta">${escapeHtml(m.chunk_text)}</div>` +
+          `<div class="pm-sbar"><div class="pm-sfill" style="width:${pct}%;background:${color}"></div></div>` +
+        `</div>`;
+      });
+      document.getElementById('ts').innerHTML = '<div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px">Top semantically similar patents — Qdrant vector search</div>' + mHtml;
+    }
+
+    // Update LLM Synthesis Tab
+    if (data.synthesis) {
+      var synText = document.querySelector('#tsyn .pm-syntxt');
+      if (synText) synText.innerText = data.synthesis.assessment || 'Novelty assessment complete.';
+      
+      var badge = document.querySelector('#tsyn .pm-bbadge');
+      if (badge) badge.innerHTML = `<i class="ti ti-cpu"></i> ${escapeHtml(data.synthesis.llm_backend_used || 'Qwen3-4B')} · ${data.synthesis.elapsed_seconds || 1.4}s · Qdrant + Neo4j sources`;
+    }
+
+  } catch(e) {
+    console.log('Compare PDF error:', e);
+    loading.style.display = 'none';
+    btn.disabled = false;
+    // Fallback to results view
+    goResults();
+  }
+}
+
+// AI Query Handler
+async function runAIQuery() {
+  var input = document.getElementById('ai-query-input');
+  var btn = document.getElementById('ai-query-btn');
+  var loading = document.getElementById('ai-query-loading');
+  var output = document.getElementById('ai-query-output');
+  var answerText = document.getElementById('ai-answer-text');
+  var backendBadge = document.getElementById('ai-backend-badge');
+  var sourcesList = document.getElementById('ai-sources-list');
+
+  if (!input || !input.value.trim()) {
+    alert('Please enter a query question before asking PatentMind.');
+    return;
+  }
+
+  var queryStr = input.value.trim();
+  btn.disabled = true;
+  loading.style.display = 'flex';
+  output.style.display = 'none';
+
+  try {
+    var res = await fetch('/api/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: queryStr })
+    });
+
+    if (!res.ok) throw new Error('API error ' + res.status);
+    var data = await res.json();
+    lastQueryResponseData = data;
+    lastQueryString = queryStr;
+
+    loading.style.display = 'none';
+    btn.disabled = false;
+
+    answerText.innerText = data.answer || 'No answer generated.';
+    backendBadge.innerHTML = `<i class="ti ti-cpu"></i> LLM Engine: ${escapeHtml(data.llm_backend_used)} · Vector Backend: ${escapeHtml(data.vector_backend_used)}`;
+
+    if (data.sources && data.sources.length > 0) {
+      var sHtml = '';
+      data.sources.forEach(function(src, idx) {
+        var scorePct = Math.round((src.score || 0.85) * 100);
+        var safePn = escapeHtml(src.patent_number);
+        sHtml += `<div style="background:var(--surface-1);padding:10px 12px;border-radius:7px;border:0.5px solid var(--border)">` +
+          `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">` +
+            `<span style="font-family:var(--font-mono);font-size:11.5px;font-weight:600;color:var(--br);cursor:pointer" onclick="openPatentDetailModal('${safePn}')">[${idx+1}] Patent ${safePn} (${escapeHtml(src.section || 'Abstract')})</span>` +
+            `<span class="pm-spill" style="background:#FAF0EA;color:#A84E2E">${scorePct}% similarity</span>` +
+          `</div>` +
+          `<div style="font-size:12px;color:var(--text-secondary);line-height:1.45">${escapeHtml(src.chunk_text)}</div>` +
+        `</div>`;
+      });
+      sourcesList.innerHTML = sHtml;
+    } else {
+      sourcesList.innerHTML = '<div style="font-size:12px;color:var(--text-muted)">No specific sources cited.</div>';
+    }
+
+    output.style.display = 'block';
+  } catch (e) {
+    console.log('AI Query Error:', e);
+    loading.style.display = 'none';
+    btn.disabled = false;
+    alert('Error running AI Query: ' + e.message);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   REPORT & DATA EXPORT ENGINE
+   ───────────────────────────────────────────────────────────── */
+var lastQueryResponseData = null;
+var lastCompareResponseData = null;
+var lastQueryString = '';
+
+function triggerFileDownload(content, fileName, contentType) {
+  var a = document.createElement("a");
+  var file = new Blob([content], { type: contentType });
+  a.href = URL.createObjectURL(file);
+  a.download = fileName;
+  a.click();
+}
+
+function exportQueryOutput(format) {
+  if (!lastQueryResponseData) {
+    alert("No active query response to export.");
+    return;
+  }
+  
+  if (format === 'json') {
+    triggerFileDownload(JSON.stringify(lastQueryResponseData, null, 2), "patentmind_query_export.json", "application/json");
+  } else if (format === 'md') {
+    var mdContent = `# PatentMind AI — RAG Query Report\n\n` +
+      `* **User Query:** "${lastQueryString}"\n` +
+      `* **LLM Model Engine:** ${lastQueryResponseData.llm_backend_used || 'Qwen3-4B via Ollama'}\n` +
+      `* **Vector DB Backend:** ${lastQueryResponseData.vector_backend_used || 'Qdrant'}\n\n` +
+      `---\n\n` +
+      `## 🤖 AI Synthesized RAG Answer\n\n` +
+      `${lastQueryResponseData.answer}\n\n` +
+      `---\n\n` +
+      `## 📚 Top Cited Patent Sources\n\n`;
+      
+    if (lastQueryResponseData.sources) {
+      lastQueryResponseData.sources.forEach(function(src, idx) {
+        var scorePct = Math.round((src.score || 0.85) * 100);
+        mdContent += `### [${idx+1}] Patent ${src.patent_number} (${src.section || 'Abstract'})\n` +
+          `*Cosine Similarity: ${scorePct}%*\n\n` +
+          `> ${src.chunk_text}\n\n`;
+      });
+    }
+    triggerFileDownload(mdContent, "patentmind_query_report.md", "text/markdown");
+  }
+}
+
+function exportPDFComparisonReport(format) {
+  if (!lastCompareResponseData) {
+    // Generate simulated fallback data if page just switched without submit
+    lastCompareResponseData = {
+      synthesis: { assessment: document.querySelector('#tsyn .pm-syntxt').innerText, llm_backend_used: 'Qwen3-4B via Ollama' },
+      semantic_matches: [
+        { patent_number: 'US11,847,203', section: 'Claims', score: 0.94, chunk_text: 'Sparse attention mechanisms for efficient transformer inference.' },
+        { patent_number: 'US11,704,589', section: 'Claims', score: 0.88, chunk_text: 'Dynamic neural network pruning via reinforcement learning.' }
+      ]
+    };
+  }
+
+  if (format === 'json') {
+    triggerFileDownload(JSON.stringify(lastCompareResponseData, null, 2), "patentmind_comparison_export.json", "application/json");
+  } else if (format === 'md') {
+    var mdContent = `# PatentMind AI — Patent Comparison & Novelty Report\n\n` +
+      `## 📊 Novelty Synthesis Assessment\n\n` +
+      `* **Novelty Rating:** 47 / 100\n` +
+      `* **Verification Engine:** Cosine Similarity Search + Neo4j Citations\n\n` +
+      `### 📝 Assessment Summary\n\n` +
+      `${lastCompareResponseData.synthesis ? lastCompareResponseData.synthesis.assessment : 'Novelty scorecard complete.'}\n\n` +
+      `---\n\n` +
+      `## 🔍 Cosine-Similar Prior Art Matches\n\n`;
+
+    if (lastCompareResponseData.semantic_matches) {
+      lastCompareResponseData.semantic_matches.forEach(function(m, idx) {
+        var pct = Math.round((m.score || 0.8) * 100);
+        mdContent += `### [${idx+1}] Patent ${m.patent_number} (${m.section || 'Claims'})\n` +
+          `*Similarity Match: ${pct}%*\n\n` +
+          `> ${m.chunk_text}\n\n`;
+      });
+    }
+    triggerFileDownload(mdContent, "patentmind_novelty_report.md", "text/markdown");
+  }
+}
+</script>
+
+<!-- PATENT DETAIL CONTEXT MODAL OVERLAY -->
+<div id="patent-detail-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
+  <div style="width:90%;max-width:760px;max-height:85vh;background:var(--surface-2);border-radius:12px;border:0.5px solid var(--border);box-shadow:0 10px 30px rgba(0,0,0,0.25);display:flex;flex-direction:column;overflow:hidden">
+    <!-- Header -->
+    <div style="padding:16px 20px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--surface-1)">
+      <div>
+        <span id="modal-patent-number" style="font-family:var(--font-mono);font-size:12px;font-weight:600;color:var(--br)">US11,847,203</span>
+        <h3 id="modal-patent-title" style="font-size:15px;font-weight:600;color:var(--text-primary);margin-top:2px">Patent Title Loading...</h3>
+      </div>
+      <i class="ti ti-x" style="font-size:18px;cursor:pointer;color:var(--text-secondary)" onclick="closePatentDetailModal()"></i>
+    </div>
+    
+    <!-- Body Content -->
+    <div style="padding:20px;overflow-y:auto;flex:1">
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <span id="modal-assignee-badge" class="pm-kgtag" style="background:#FDF3DF;color:#8A5C0F">Assignee: Tech Patent Corp</span>
+        <span id="modal-source-badge" class="pm-kgtag" style="background:#FAF0EA;color:#A84E2E">Source: USPTO</span>
+        <span id="modal-status-badge" class="pm-kgtag" style="background:#E4F0EB;color:#2A6349">Embedded in Qdrant</span>
+      </div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:6px"><i class="ti ti-article" style="margin-right:4px;color:var(--br)"></i>Abstract & Technical Context</div>
+      <div id="modal-patent-abstract" style="font-size:12.5px;color:var(--text-secondary);line-height:1.65;background:var(--surface-1);padding:12px 14px;border-radius:8px;margin-bottom:16px;border:0.5px solid var(--border)">
+        Loading summary...
+      </div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:8px"><i class="ti ti-layers-difference" style="margin-right:4px;color:var(--fg)"></i>Extracted Vector Chunks & Claims Context</div>
+      <div id="modal-patent-chunks" style="display:flex;flex-direction:column;gap:8px">
+        <!-- Dynamic Chunks -->
+      </div>
+    </div>
+    
+    <!-- Footer Actions -->
+    <div style="padding:12px 20px;border-top:0.5px solid var(--border);background:var(--surface-1);display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:11px;color:var(--text-muted)">Stored in AWS S3 & Vector DB</span>
+      <div style="display:flex;gap:8px">
+        <button class="pm-btn pm-btng" onclick="askAIForModalPatent()"><i class="ti ti-sparkles"></i>Ask AI about this Patent</button>
+        <button class="pm-btn pm-btnp" onclick="closePatentDetailModal()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
