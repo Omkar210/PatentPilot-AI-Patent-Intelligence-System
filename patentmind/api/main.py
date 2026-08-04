@@ -514,14 +514,15 @@ from fastapi.responses import FileResponse
 
 @app.get("/", include_in_schema=False)
 def serve_root_dashboard():
+    no_cache_headers = {"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"}
     prod_html = os.path.join(frontend_dist, "index.html")
     if os.path.exists(prod_html):
-        return FileResponse(prod_html)
+        return FileResponse(prod_html, headers=no_cache_headers)
         
     root_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     dashboard_html = os.path.join(root_dir, "patentmind_ai_dashboard.html")
     if os.path.exists(dashboard_html):
-        return FileResponse(dashboard_html)
+        return FileResponse(dashboard_html, headers=no_cache_headers)
     return {"message": "PatentMind AI API Active."}
 
 frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
