@@ -57,12 +57,22 @@ class RAGPipeline:
             assembled_context = assembled_context[:24000] + "\n...[Context truncated for token limit]"
 
         # 5. Prompt Construction
-        system_instructions = (
-            "You are a Patent Intelligence Analyst. Answer the user's question using ONLY the provided patent context. "
-            "Cite the specific patent number (e.g. Patent US110000001) for every claim or technical detail you mention. "
-            "If the context is insufficient, explicitly state that. Do not hallucinate patent details."
-        )
-
+        max_score = max([s["score"] for s in sources]) if sources else 0.0
+        
+        if max_score < 0.35 or not sources:
+            system_instructions = (
+                "You are a Patent Intelligence Analyst. No relevant matching patents were found in the database. "
+                "Answer the user's question using your general technical knowledge, explaining how the requested "
+                "concepts (e.g., Vision Transformers on edge devices) are typically designed, optimized, and trained in recent AI developments. "
+                "Start your answer with: '[GENERAL KNOWLEDGE FALLBACK] No direct matching patent documents were found in the database. Here is general technical info:\n\n'"
+            )
+        else:
+            system_instructions = (
+                "You are a Patent Intelligence Analyst. Answer the user's question using ONLY the provided patent context. "
+                "Cite the specific patent number (e.g. Patent US110000001) for every claim or technical detail you mention. "
+                "If the context is insufficient, explicitly state that. Do not hallucinate patent details."
+            )
+ 
         full_prompt = (
             f"{system_instructions}\n\n"
             f"=== RETRIEVED PATENT CONTEXT ===\n{assembled_context}\n\n"
