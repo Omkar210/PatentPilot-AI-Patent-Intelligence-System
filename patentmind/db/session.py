@@ -7,6 +7,8 @@ from patentmind.db.models import Base
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./patentmind_fallback.db")
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # Standard sync engine for Alembic and general operations
 engine = create_engine(

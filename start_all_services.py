@@ -249,8 +249,9 @@ def launch_fastapi_server(host: str, port: int):
 def main():
     parser = argparse.ArgumentParser(description="PatentMind AI - Service Launcher")
     parser.add_argument("--worker", action="store_true", help="Run batch S3 GPU worker before starting API")
+    port_default = int(os.getenv("PORT", "8000"))
     parser.add_argument("--host", default="0.0.0.0", help="Host address for FastAPI server")
-    parser.add_argument("--port", type=int, default=8000, help="Port for FastAPI server")
+    parser.add_argument("--port", type=int, default=port_default, help="Port for FastAPI server")
     args = parser.parse_args()
 
     print_banner()
