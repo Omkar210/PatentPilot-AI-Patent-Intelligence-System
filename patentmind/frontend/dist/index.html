@@ -1364,11 +1364,12 @@
             }, 4000);
         }
 
-        // API Mocks (since we can't actually fetch)
-        // In a real app, these would be fetch() calls to the relative URLs requested.
-        // I will implement them as real fetches but handle failures gracefully with mocks if API is down.
-        
-        const API_BASE_URL = 'https://cb1f0d7a414a74.lhr.life';
+        // Smart dynamic base URL detection
+        const API_BASE_URL = (window.location.origin.includes('lhr.life') || 
+                              window.location.origin.includes('localhost') || 
+                              window.location.origin.includes('127.0.0.1'))
+            ? ''
+            : 'https://cb1f0d7a414a74.lhr.life'; // Fallback for external hosting like Vercel
         
         async function apiFetch(url, options = {}) {
             try {
